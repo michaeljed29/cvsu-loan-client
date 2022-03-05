@@ -20,6 +20,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import WarningIcon from "@mui/icons-material/Warning";
+import Loader from "components/Loader";
 
 import { omit } from "lodash";
 
@@ -35,7 +36,6 @@ const UsersPage = () => {
   const updateUserResult = useUpdateUser();
   const deleteUserResult = useDeleteUser();
   const navigate = useNavigate();
-  console.log("usersQuery", usersQuery);
 
   const users = get(usersQuery, "data", []);
   const isLoading = get(usersQuery, "isLoading");
@@ -45,10 +45,7 @@ const UsersPage = () => {
   const updateUser = get(updateUserResult, "mutate");
   const deleteUser = get(deleteUserResult, "mutate");
 
-  console.log("users", users);
-  console.log("isLoading", isLoading);
-
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <Loader />;
 
   const onAdd = () => {
     console.log("adding");
@@ -114,15 +111,7 @@ const UsersPage = () => {
     );
   };
 
-  const handleClickRow = (value) => {
-    console.log("value", value);
-    navigate(`/users/${value._id}`);
-  };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log("submitting");
-  // };
+  const handleClickRow = (value) => navigate(`/users/${value._id}`);
 
   return (
     <>
