@@ -3,7 +3,7 @@ import DashboardPage from "./pages/DashboardPage";
 import LoansPage from "./pages/LoansPage";
 import UsersPage from "./pages/users/UsersPage";
 import UserPage from "./pages/users/view/UserPage";
-import CalculatorPage from "./pages/CalculatorPage";
+import CalculatorPage from "pages/calculator/CalculatorPage";
 import ReportsPage from "./pages/ReportsPage";
 import FaqsPage from "./pages/FaqsPage";
 import NotificationsPage from "./pages/NotificationsPage";
