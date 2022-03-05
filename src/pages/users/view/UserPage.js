@@ -4,10 +4,18 @@ import { useUser } from "../../../hooks/users";
 import { makeStyles } from "@mui/styles";
 import { get } from "lodash";
 import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
 import Loader from "components/Loader";
 import ViewItem from "components/ViewItem";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    "& .back-btn": {
+      marginTop: 30,
+    },
+  },
   title: {
     fontSize: 30,
     fontWeight: 500,
@@ -18,9 +26,12 @@ const UsersPage = () => {
   const classes = useStyles();
   const { id } = useParams();
   const userQuery = useUser(id);
+  const navigate = useNavigate();
 
   const user = get(userQuery, "data", []);
   const isLoading = get(userQuery, "isLoading");
+
+  const handleBack = () => navigate(`/users`);
 
   const {
     firstName,
@@ -36,7 +47,7 @@ const UsersPage = () => {
   if (isLoading) return <Loader />;
 
   return (
-    <div>
+    <div className={classes.root}>
       <div style={{ display: "flex", alignItems: "center", marginBottom: 30 }}>
         <h2 className={classes.title}>User Details</h2>
         <span
@@ -80,6 +91,15 @@ const UsersPage = () => {
           <ViewItem label="Generated Password:">{initialPassword}</ViewItem>
         </Grid>
       </Grid>
+
+      <Button
+        onClick={handleBack}
+        startIcon={<ArrowBackIcon />}
+        className="back-btn"
+        variant="text"
+      >
+        Back
+      </Button>
     </div>
   );
 };

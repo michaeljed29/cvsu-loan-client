@@ -111,15 +111,7 @@ const UsersPage = () => {
     );
   };
 
-  const handleClickRow = (value) => {
-    console.log("value", value);
-    navigate(`/users/${value._id}`);
-  };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log("submitting");
-  // };
+  const handleClickRow = (value) => navigate(`/users/${value._id}`);
 
   return (
     <>
