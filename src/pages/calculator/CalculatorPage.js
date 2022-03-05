@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     color: "",
   },
   btnCalculate: {
-    marginTop: 25,
+    marginTop: 20,
   },
   results: {
     flex: 1,
