@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   useUsers,
   useCreateUser,
@@ -9,27 +9,25 @@ import { get } from "lodash";
 import Table from "components/Table";
 import UserModal from "./UserModal";
 import UpdateUserModal from "./UpdateUserModal";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
 import ConfirmModal from "components/ConfirmModal";
 import { useNavigate } from "react-router-dom";
 import WarningIcon from "@mui/icons-material/Warning";
 import Loader from "components/Loader";
-
-import { omit } from "lodash";
+import Alert from "components/Alert";
+import { AlertContext } from "context/AlertContext";
 
 const UsersPage = () => {
   const usersQuery = useUsers();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isFormEditOpen, setIsFormEditOpen] = useState(false);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
-  const [isOpenSnackbar, setIsOpenSnackbar] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
-  const [message, setMessage] = useState("");
   const createUserResult = useCreateUser();
   const updateUserResult = useUpdateUser();
   const deleteUserResult = useDeleteUser();
   const navigate = useNavigate();
+
+  const { setAlert } = useContext(AlertContext);
 
   const users = get(usersQuery, "data", []);
   const isLoading = get(usersQuery, "isLoading");
@@ -44,21 +42,14 @@ const UsersPage = () => {
 
   if (isLoading) return <Loader />;
 
-  const onAdd = () => {
-    console.log("adding");
-    setIsFormOpen(true);
-  };
+  const onAdd = () => setIsFormOpen(true);
 
   const onEdit = (value) => {
-    console.log("edit");
-    console.log("value", value);
     setCurrentUser(value);
     setIsFormEditOpen(true);
   };
 
   const onDelete = (value) => {
-    console.log("delete");
-    console.log("value", value);
     setCurrentUser(value);
     setIsConfirmationOpen(true);
   };
@@ -68,8 +59,7 @@ const UsersPage = () => {
       onSuccess: () => {
         refetchUsers();
         setIsConfirmationOpen(false);
-        setIsOpenSnackbar(true);
-        setMessage("User has been successfully deleted.");
+        setAlert("User has been successfully deleted.");
       },
     });
   };
@@ -79,18 +69,13 @@ const UsersPage = () => {
       onSuccess: () => {
         refetchUsers();
         setIsFormOpen(false);
-        setIsOpenSnackbar(true);
         resetForm();
-        setMessage("User has been successfully added.");
+        setAlert("User has been successfully added.");
       },
     });
   };
 
   const handleEdit = (value, { resetForm }) => {
-    console.log(
-      'omit(value, ["password"]),',
-      omit(value, ["password", "createdAt"])
-    );
     updateUser(
       {
         id: value._id,
@@ -100,9 +85,8 @@ const UsersPage = () => {
         onSuccess: () => {
           refetchUsers();
           setIsFormEditOpen(false);
-          setIsOpenSnackbar(true);
           resetForm();
-          setMessage("User has been successfully updated.");
+          setAlert("User has been successfully updated.");
         },
       }
     );
@@ -112,18 +96,7 @@ const UsersPage = () => {
 
   return (
     <>
-      <Snackbar
-        open={isOpenSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        autoHideDuration={5000}
-        onClose={() => {
-          setIsOpenSnackbar(false);
-        }}
-      >
-        <Alert severity="success" sx={{ width: "100%" }} elevation={6}>
-          {message}
-        </Alert>
-      </Snackbar>
+      <Alert />
       <UserModal
         title={"Add user"}
         onClose={() => setIsFormOpen(false)}

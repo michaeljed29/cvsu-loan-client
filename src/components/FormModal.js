@@ -17,6 +17,7 @@ const FormDialog = (props) => {
     children,
     addLabel = "Add",
     loading,
+    buttonProps = {},
   } = props;
 
   return (
@@ -24,7 +25,7 @@ const FormDialog = (props) => {
       <Dialog fullWidth size={size} open={open} onClose={onClose}>
         <DialogTitle>{title}</DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText style={{ marginBottom: 20 }}>
             Please fill up all needed information
           </DialogContentText>
           {children}
@@ -35,6 +36,7 @@ const FormDialog = (props) => {
             variant="contained"
             onClick={onSubmit}
             loading={loading}
+            {...buttonProps}
           >
             {addLabel}
           </ButtonLoader>

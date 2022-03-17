@@ -11,3 +11,15 @@ export const getLoans = async () => {
 };
 
 export const getLoan = async (id) => {};
+
+export const createLoan = async (value) => {
+  try {
+    const { data } = await api.post("/loans", value);
+
+    if (data.message) throw new Error(data.message);
+
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
