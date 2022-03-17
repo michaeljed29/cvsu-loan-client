@@ -7,18 +7,12 @@ import {
 } from "hooks/users";
 import { get } from "lodash";
 import Table from "components/Table";
-import FormDialog from "./UserModal";
+import UserModal from "./UserModal";
 import UpdateUserModal from "./UpdateUserModal";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
-
+import ConfirmModal from "components/ConfirmModal";
 import { useNavigate } from "react-router-dom";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import WarningIcon from "@mui/icons-material/Warning";
 import Loader from "components/Loader";
 
@@ -42,8 +36,11 @@ const UsersPage = () => {
   const refetchUsers = get(usersQuery, "refetch");
 
   const createUser = get(createUserResult, "mutate");
+  const isAdding = get(createUserResult, "isLoading");
   const updateUser = get(updateUserResult, "mutate");
+  const isUpdating = get(updateUserResult, "isLoading");
   const deleteUser = get(deleteUserResult, "mutate");
+  const isDeleting = get(deleteUserResult, "isLoading");
 
   if (isLoading) return <Loader />;
 
@@ -127,11 +124,12 @@ const UsersPage = () => {
           {message}
         </Alert>
       </Snackbar>
-      <FormDialog
+      <UserModal
         title={"Add user"}
         onClose={() => setIsFormOpen(false)}
         isOpen={isFormOpen}
         onSubmit={handleSubmit}
+        loading={isAdding}
       />
 
       <UpdateUserModal
@@ -139,36 +137,22 @@ const UsersPage = () => {
         isOpen={isFormEditOpen}
         onSubmit={handleEdit}
         currentUser={currentUser}
+        loading={isUpdating}
       />
 
       <div>
-        <Dialog
+        <ConfirmModal
           open={isConfirmationOpen}
+          title="Delete User?"
+          text="Are you sure you want to delete user? This action can not be
+          revert"
+          icon={<WarningIcon color="warning" fontSize="large" />}
+          loading={isDeleting}
           onClose={() => {
             setIsConfirmationOpen(false);
           }}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">Delete User?</DialogTitle>
-          <DialogContent style={{ display: "flex", alignItems: "center" }}>
-            <WarningIcon color="warning" fontSize="large" />
-            <DialogContentText style={{ marginLeft: 15 }}>
-              Are you sure you want to delete user? This action can not be
-              revert
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              onClick={() => {
-                setIsConfirmationOpen(false);
-              }}
-            >
-              No
-            </Button>
-            <Button onClick={handleDelete}>Yes</Button>
-          </DialogActions>
-        </Dialog>
+          onConfirm={handleDelete}
+        />
       </div>
       <div>
         <Table
