@@ -9,11 +9,16 @@ import Loader from "components/Loader";
 import ViewItem from "components/ViewItem";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
+import Badge from "components/Badge";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     "& .back-btn": {
       marginTop: 30,
+    },
+
+    "& .badge": {
+      marginLeft: 15,
     },
   },
   title: {
@@ -50,19 +55,7 @@ const UsersPage = () => {
     <div className={classes.root}>
       <div style={{ display: "flex", alignItems: "center", marginBottom: 30 }}>
         <h2 className={classes.title}>User Details</h2>
-        <span
-          style={{
-            marginLeft: 15,
-            background: type === "admin" ? "#4caf50" : "#42a5f5",
-            padding: "3px 7px",
-            fontSize: 12,
-            fontWeight: 600,
-            color: "#fff",
-            borderRadius: 15,
-          }}
-        >
-          {type}
-        </span>
+        <Badge type={type === "admin" ? "success" : "info"}>{type}</Badge>
       </div>
 
       <Grid container spacing={3}>
