@@ -1,5 +1,6 @@
 import * as React from "react";
 import PropTypes from "prop-types";
+import { get } from "lodash";
 import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -88,32 +89,22 @@ function stableSort(array, comparator) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-const headCells = [
-  {
-    id: "firstName",
+function getHeadCells(columns) {
+  const defaultProps = {
     numeric: false,
     disablePadding: false,
-    label: "First Name",
-  },
-  {
-    id: "lastName",
-    numeric: false,
-    disablePadding: false,
-    label: "Last Name",
-  },
-  {
-    id: "position",
-    numeric: false,
-    disablePadding: false,
-    label: "Position",
-  },
-  {
-    id: "department",
-    numeric: false,
-    disablePadding: false,
-    label: "Department",
-  },
-];
+  };
+
+  const headCells = columns.map((column) => {
+    return {
+      ...defaultProps,
+      id: column.field,
+      label: column.label,
+    };
+  });
+
+  return headCells;
+}
 
 function EnhancedTableHead(props) {
   const {
@@ -123,6 +114,7 @@ function EnhancedTableHead(props) {
     numSelected,
     rowCount,
     onRequestSort,
+    columns,
   } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -142,7 +134,7 @@ function EnhancedTableHead(props) {
             }}
           />
         </TableCell> */}
-        {headCells.map((headCell) => (
+        {getHeadCells(columns).map((headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.numeric ? "right" : "left"}
@@ -183,7 +175,7 @@ EnhancedTableHead.propTypes = {
 };
 
 const EnhancedTableToolbar = (props) => {
-  const { numSelected, onSearch, onAdd } = props;
+  const { numSelected, onSearch, onAdd, title } = props;
   const [search, setSearch] = React.useState("");
 
   React.useEffect(() => {
@@ -221,7 +213,7 @@ const EnhancedTableToolbar = (props) => {
             id="tableTitle"
             component="div"
           >
-            Users Table
+            {title}
           </Typography>
           <Button
             size="small"
@@ -272,7 +264,16 @@ EnhancedTableToolbar.propTypes = {
 };
 
 export default function EnhancedTable(props) {
-  let { rows = [], onAdd, onDelete, onClickRow, onEdit } = props;
+  let {
+    rows = [],
+    columns = [],
+    onAdd,
+    onDelete,
+    onClickRow,
+    onEdit,
+    title = "Table",
+    searchKeys = [],
+  } = props;
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
@@ -337,11 +338,28 @@ export default function EnhancedTable(props) {
 
   const handleSearch = (value) => setSearch(value);
 
-  rows = rows.filter((row) => {
-    if (
-      row.firstName.toLowerCase().includes(search.toLowerCase()) ||
-      row.lastName.toLowerCase().includes(search.toLowerCase())
-    ) {
+  console.log("searchKeys", searchKeys);
+
+  const getSearchText = (rows, searchKeys) => {
+    const filteredItems = [];
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+
+      const searchTexts = searchKeys.map((key) => get(row, key));
+
+      filteredItems.push(searchTexts.join(" "));
+    }
+
+    return filteredItems;
+  };
+
+  const searchTexts = getSearchText(rows, searchKeys);
+
+  console.log("searchTexts", searchTexts);
+
+  rows = rows.filter((row, i) => {
+    if (searchTexts[i].toLowerCase().includes(search.toLowerCase())) {
       return true;
     }
 
@@ -355,6 +373,7 @@ export default function EnhancedTable(props) {
           numSelected={selected.length}
           onSearch={handleSearch}
           onAdd={onAdd}
+          title={title}
         />
         <TableContainer>
           <Table
@@ -369,6 +388,7 @@ export default function EnhancedTable(props) {
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
+              columns={columns}
             />
             <TableBody>
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
@@ -376,7 +396,7 @@ export default function EnhancedTable(props) {
 
               {isEmpty(rows) ? (
                 <TableRow style={{}}>
-                  <TableCell align="center" colSpan={6}>
+                  <TableCell align="center" colSpan={columns.length + 2}>
                     <span style={{ color: "red" }}>No data</span>
                   </TableCell>
                   {/* <TableCell colSpan={6} /> */}
@@ -398,7 +418,7 @@ export default function EnhancedTable(props) {
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
-                        key={row.name}
+                        key={index}
                         selected={isItemSelected}
                         onClick={() => onClickRow(row)}
                       >
@@ -411,12 +431,27 @@ export default function EnhancedTable(props) {
                           }}
                         />
                       </TableCell> */}
-                        <TableCell component="th" id={labelId} scope="row">
-                          {row.firstName}
-                        </TableCell>
-                        <TableCell>{row.lastName}</TableCell>
-                        <TableCell>{row.position}</TableCell>
-                        <TableCell>{row.department}</TableCell>
+                        {columns.map((column) => {
+                          const cellProps = get(column, "cellProps", {});
+                          if (column.renderCell) {
+                            return (
+                              <TableCell {...cellProps}>
+                                {column.renderCell(row)}
+                              </TableCell>
+                            );
+                          }
+
+                          return (
+                            <TableCell
+                              component="th"
+                              id={labelId}
+                              scope="row"
+                              {...cellProps}
+                            >
+                              {get(row, column.field)}
+                            </TableCell>
+                          );
+                        })}
                         <TableCell padding="none" align={"right"}>
                           <Stack
                             direction="row"
@@ -454,11 +489,7 @@ export default function EnhancedTable(props) {
               )}
 
               {emptyRows > 0 && (
-                <TableRow
-                // style={{
-                //   height: (dense ? 33 : 53) * emptyRows,
-                // }}
-                >
+                <TableRow>
                   <TableCell colSpan={6} />
                 </TableRow>
               )}

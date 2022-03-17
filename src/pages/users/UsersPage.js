@@ -4,9 +4,9 @@ import {
   useCreateUser,
   useUpdateUser,
   useDeleteUser,
-} from "../../hooks/users";
+} from "hooks/users";
 import { get } from "lodash";
-import Table from "../../components/Table";
+import Table from "components/Table";
 import FormDialog from "./UserModal";
 import UpdateUserModal from "./UpdateUserModal";
 import Snackbar from "@mui/material/Snackbar";
@@ -172,9 +172,29 @@ const UsersPage = () => {
       </div>
       <div>
         <Table
+          rows={users}
+          title={"Users Table"}
+          columns={[
+            {
+              field: "firstName",
+              label: "First Name",
+            },
+            {
+              field: "lastName",
+              label: "Last Name",
+            },
+            {
+              field: "position",
+              label: "Position",
+            },
+            {
+              field: "department",
+              label: "Department",
+            },
+          ]}
+          searchKeys={["firstName", "lastName", "position", "department"]}
           onAdd={onAdd}
           onDelete={onDelete}
-          rows={users}
           onClickRow={handleClickRow}
           onEdit={onEdit}
         />

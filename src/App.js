@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import DashboardPage from "./pages/DashboardPage";
-import LoansPage from "./pages/LoansPage";
-import UsersPage from "./pages/users/UsersPage";
+import LoansPage from "pages/loans/LoansPage";
+import UsersPage from "pages/users/UsersPage";
 import UserPage from "./pages/users/view/UserPage";
 import CalculatorPage from "pages/calculator/CalculatorPage";
 import ReportsPage from "./pages/ReportsPage";
