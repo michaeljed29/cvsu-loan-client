@@ -96,6 +96,7 @@ function EnhancedTableHead(props) {
     rowCount,
     onRequestSort,
     columns,
+    hasActions,
   } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -137,10 +138,13 @@ function EnhancedTableHead(props) {
             </TableSortLabel>
           </TableCell>
         ))}
-        <TableCell
-          align={"right"}
-          style={{ fontWeight: 600, width: 120 }}
-        ></TableCell>
+
+        {hasActions && (
+          <TableCell
+            align={"right"}
+            style={{ fontWeight: 600, width: 120 }}
+          ></TableCell>
+        )}
       </TableRow>
     </TableHead>
   );
@@ -255,6 +259,7 @@ export default function EnhancedTable(props) {
     title = "Table",
     searchKeys = [],
   } = props;
+
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("");
   const [selected, setSelected] = React.useState([]);
@@ -262,6 +267,8 @@ export default function EnhancedTable(props) {
   const [search, setSearch] = React.useState("");
   // const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  const hasActions = onEdit || onDelete;
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -364,6 +371,7 @@ export default function EnhancedTable(props) {
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
               columns={columns}
+              hasActions={hasActions}
             />
             <TableBody>
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
@@ -427,37 +435,44 @@ export default function EnhancedTable(props) {
                             </TableCell>
                           );
                         })}
-                        <TableCell padding="none" align={"right"}>
-                          <Stack
-                            direction="row"
-                            spacing={1}
-                            justifyContent="flex-end"
-                            style={{ paddingRight: 20 }}
-                          >
-                            <IconButton
-                              size="small"
-                              aria-label="delete"
-                              color="info"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onEdit(row);
-                              }}
+                        {hasActions && (
+                          <TableCell padding="none" align={"right"}>
+                            <Stack
+                              direction="row"
+                              spacing={1}
+                              justifyContent="flex-end"
+                              style={{ paddingRight: 20 }}
                             >
-                              <EditIcon />
-                            </IconButton>
-                            <IconButton
-                              size="small"
-                              aria-label="delete"
-                              color="error"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onDelete(row);
-                              }}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </Stack>
-                        </TableCell>
+                              {onEdit && (
+                                <IconButton
+                                  size="small"
+                                  aria-label="delete"
+                                  color="info"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onEdit(row);
+                                  }}
+                                >
+                                  <EditIcon />
+                                </IconButton>
+                              )}
+
+                              {onDelete && (
+                                <IconButton
+                                  size="small"
+                                  aria-label="delete"
+                                  color="error"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onDelete(row);
+                                  }}
+                                >
+                                  <DeleteIcon />
+                                </IconButton>
+                              )}
+                            </Stack>
+                          </TableCell>
+                        )}
                       </TableRow>
                     );
                   })
