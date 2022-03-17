@@ -6,3 +6,7 @@ const key = "loans";
 export const useLoans = () => {
   return useQuery([key], () => apiLoans.getLoans());
 };
+
+export const useCreateLoan = () => {
+  return useMutation(apiLoans.createLoan);
+};

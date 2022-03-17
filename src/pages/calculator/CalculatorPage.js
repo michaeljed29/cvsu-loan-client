@@ -120,12 +120,11 @@ const CalculatorPage = () => {
   };
 
   return (
-    // <div className={classes.root}>
     <Grid container spacing={2}>
       <Grid item xs={12} md={12} lg={6}>
         <Paper className={classes.paper} elevation={2}>
           <p className={classes.instruction}>
-            Please enter needed information.
+            Please fill up all needed information
           </p>
 
           <TextField

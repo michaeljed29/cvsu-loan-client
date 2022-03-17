@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   useUsers,
   useCreateUser,
@@ -7,61 +7,49 @@ import {
 } from "hooks/users";
 import { get } from "lodash";
 import Table from "components/Table";
-import FormDialog from "./UserModal";
+import UserModal from "./UserModal";
 import UpdateUserModal from "./UpdateUserModal";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
-
+import ConfirmModal from "components/ConfirmModal";
 import { useNavigate } from "react-router-dom";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import WarningIcon from "@mui/icons-material/Warning";
 import Loader from "components/Loader";
-
-import { omit } from "lodash";
+import Alert from "components/Alert";
+import { AlertContext } from "context/AlertContext";
 
 const UsersPage = () => {
   const usersQuery = useUsers();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isFormEditOpen, setIsFormEditOpen] = useState(false);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
-  const [isOpenSnackbar, setIsOpenSnackbar] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
-  const [message, setMessage] = useState("");
   const createUserResult = useCreateUser();
   const updateUserResult = useUpdateUser();
   const deleteUserResult = useDeleteUser();
   const navigate = useNavigate();
+
+  const { setAlert } = useContext(AlertContext);
 
   const users = get(usersQuery, "data", []);
   const isLoading = get(usersQuery, "isLoading");
   const refetchUsers = get(usersQuery, "refetch");
 
   const createUser = get(createUserResult, "mutate");
+  const isAdding = get(createUserResult, "isLoading");
   const updateUser = get(updateUserResult, "mutate");
+  const isUpdating = get(updateUserResult, "isLoading");
   const deleteUser = get(deleteUserResult, "mutate");
+  const isDeleting = get(deleteUserResult, "isLoading");
 
   if (isLoading) return <Loader />;
 
-  const onAdd = () => {
-    console.log("adding");
-    setIsFormOpen(true);
-  };
+  const onAdd = () => setIsFormOpen(true);
 
   const onEdit = (value) => {
-    console.log("edit");
-    console.log("value", value);
     setCurrentUser(value);
     setIsFormEditOpen(true);
   };
 
   const onDelete = (value) => {
-    console.log("delete");
-    console.log("value", value);
     setCurrentUser(value);
     setIsConfirmationOpen(true);
   };
@@ -71,8 +59,7 @@ const UsersPage = () => {
       onSuccess: () => {
         refetchUsers();
         setIsConfirmationOpen(false);
-        setIsOpenSnackbar(true);
-        setMessage("User has been successfully deleted.");
+        setAlert("User has been successfully deleted.");
       },
     });
   };
@@ -82,18 +69,13 @@ const UsersPage = () => {
       onSuccess: () => {
         refetchUsers();
         setIsFormOpen(false);
-        setIsOpenSnackbar(true);
         resetForm();
-        setMessage("User has been successfully added.");
+        setAlert("User has been successfully added.");
       },
     });
   };
 
   const handleEdit = (value, { resetForm }) => {
-    console.log(
-      'omit(value, ["password"]),',
-      omit(value, ["password", "createdAt"])
-    );
     updateUser(
       {
         id: value._id,
@@ -103,9 +85,8 @@ const UsersPage = () => {
         onSuccess: () => {
           refetchUsers();
           setIsFormEditOpen(false);
-          setIsOpenSnackbar(true);
           resetForm();
-          setMessage("User has been successfully updated.");
+          setAlert("User has been successfully updated.");
         },
       }
     );
@@ -115,23 +96,13 @@ const UsersPage = () => {
 
   return (
     <>
-      <Snackbar
-        open={isOpenSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        autoHideDuration={5000}
-        onClose={() => {
-          setIsOpenSnackbar(false);
-        }}
-      >
-        <Alert severity="success" sx={{ width: "100%" }} elevation={6}>
-          {message}
-        </Alert>
-      </Snackbar>
-      <FormDialog
+      <Alert />
+      <UserModal
         title={"Add user"}
         onClose={() => setIsFormOpen(false)}
         isOpen={isFormOpen}
         onSubmit={handleSubmit}
+        loading={isAdding}
       />
 
       <UpdateUserModal
@@ -139,36 +110,22 @@ const UsersPage = () => {
         isOpen={isFormEditOpen}
         onSubmit={handleEdit}
         currentUser={currentUser}
+        loading={isUpdating}
       />
 
       <div>
-        <Dialog
+        <ConfirmModal
           open={isConfirmationOpen}
+          title="Delete User?"
+          text="Are you sure you want to delete user? This action can not be
+          revert"
+          icon={<WarningIcon color="warning" fontSize="large" />}
+          loading={isDeleting}
           onClose={() => {
             setIsConfirmationOpen(false);
           }}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">Delete User?</DialogTitle>
-          <DialogContent style={{ display: "flex", alignItems: "center" }}>
-            <WarningIcon color="warning" fontSize="large" />
-            <DialogContentText style={{ marginLeft: 15 }}>
-              Are you sure you want to delete user? This action can not be
-              revert
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              onClick={() => {
-                setIsConfirmationOpen(false);
-              }}
-            >
-              No
-            </Button>
-            <Button onClick={handleDelete}>Yes</Button>
-          </DialogActions>
-        </Dialog>
+          onConfirm={handleDelete}
+        />
       </div>
       <div>
         <Table

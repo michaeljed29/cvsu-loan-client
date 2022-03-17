@@ -6,21 +6,24 @@ import LoginPage from "./pages/LoginPage";
 import Theme, { GlobalStyles } from "./styles/Theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import Provider from "./Provider";
+import AlertProvider from "context/AlertContext";
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider>
-      <GlobalStyles />
-      <Theme>
-        <CssBaseline />
-        <BrowserRouter>
-          <Routes>
-            <Route path="*" element={<App />} />
-            <Route path="/login" element={<LoginPage />} />
-          </Routes>
-        </BrowserRouter>
-      </Theme>
-    </Provider>
+    <AlertProvider>
+      <Provider>
+        <GlobalStyles />
+        <Theme>
+          <CssBaseline />
+          <BrowserRouter>
+            <Routes>
+              <Route path="*" element={<App />} />
+              <Route path="/login" element={<LoginPage />} />
+            </Routes>
+          </BrowserRouter>
+        </Theme>
+      </Provider>
+    </AlertProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );
