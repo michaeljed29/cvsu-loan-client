@@ -16,9 +16,9 @@ const useStyles = makeStyles((theme) => ({
 
 const ViewItem = (props) => {
   const classes = useStyles();
-  const { label, children } = props;
+  const { className, label, children } = props;
   return (
-    <div className={classes.textValue}>
+    <div className={`${className} ${classes.textValue}`}>
       <div className={classes.label}>{label}</div>
       <div className={classes.value}>{children}</div>
     </div>

@@ -11,6 +11,7 @@ const useStyles = makeStyles((theme) => ({
       if (props.type === "success") return theme.palette.success.light;
       if (props.type === "info") return theme.palette.info.main;
       if (props.type === "warning") return theme.palette.warning.light;
+      if (props.type === "danger") return theme.palette.error.light;
       return "#888888";
     },
     color: (props) => {

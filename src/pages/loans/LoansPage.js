@@ -8,11 +8,13 @@ import Badge from "components/Badge";
 import LoanModal from "./LoanModal";
 import Alert from "components/Alert";
 import { AlertContext } from "context/AlertContext";
+import { useNavigate } from "react-router-dom";
 
 const LoansPage = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const loansQuery = useLoans();
   const createLoanResult = useCreateLoan();
+  const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -36,6 +38,8 @@ const LoansPage = () => {
       },
     });
   };
+
+  const handleClickRow = (value) => navigate(`/loans/${value._id}`);
 
   if (isLoading) return <Loader />;
 
@@ -88,9 +92,11 @@ const LoansPage = () => {
             renderCell: (row) => {
               const type =
                 row.status === "approved"
-                  ? "sucess"
+                  ? "success"
                   : row.status === "processing"
                   ? "warning"
+                  : row.status === "rejected"
+                  ? "danger"
                   : undefined;
 
               return <Badge type={type}>{row.status}</Badge>;
@@ -118,6 +124,7 @@ const LoansPage = () => {
           "status",
         ]}
         onAdd={onAdd}
+        onClickRow={handleClickRow}
       />
     </>
   );

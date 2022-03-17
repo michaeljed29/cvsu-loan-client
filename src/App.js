@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import DashboardPage from "./pages/DashboardPage";
 import LoansPage from "pages/loans/LoansPage";
+import LoanPage from "pages/loans/view/LoanPage";
 import UsersPage from "pages/users/UsersPage";
 import UserPage from "./pages/users/view/UserPage";
 import CalculatorPage from "pages/calculator/CalculatorPage";
@@ -253,6 +254,7 @@ const App = (props) => {
         <Routes>
           <Route>
             <Route path="/" element={<DashboardPage />} />
+            <Route path="/loans/:id" element={<LoanPage />} />
             <Route path="/loans" element={<LoansPage />} />
             <Route path="/users/:id" element={<UserPage />} />
             <Route path="/users" element={<UsersPage />} />
