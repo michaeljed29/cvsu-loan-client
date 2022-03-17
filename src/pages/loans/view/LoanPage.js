@@ -131,6 +131,7 @@ const LoanPage = () => {
               variant="outlined"
               onClick={handleSetStatus()}
               loading={isUpdating && isRejecting}
+              color="error"
             >
               Set to Rejected
             </ButtonLoader>
