@@ -156,22 +156,6 @@ const App = (props) => {
         )}
 
         <ListItem
-          selected={pathname.includes("/faqs")}
-          button
-          key="FAQs"
-          component={Link}
-          to="/faqs"
-          onClick={handleDrawerToggle}
-        >
-          <ListItemIcon>
-            <QuizIcon />
-          </ListItemIcon>
-          <ListItemText primary="FAQs" />
-        </ListItem>
-      </List>
-      <Divider />
-      <List>
-        <ListItem
           selected={pathname.includes("/notifications")}
           button
           key="Notifications"
@@ -198,6 +182,23 @@ const App = (props) => {
             </span>
           )}
         </ListItem>
+      </List>
+      <Divider />
+      <List>
+        <ListItem
+          selected={pathname.includes("/faqs")}
+          button
+          key="FAQs"
+          component={Link}
+          to="/faqs"
+          onClick={handleDrawerToggle}
+        >
+          <ListItemIcon>
+            <QuizIcon />
+          </ListItemIcon>
+          <ListItemText primary="FAQs" />
+        </ListItem>
+
         <ListItem button key="Logout" onClick={handleLogout}>
           <ListItemIcon>
             <LogoutIcon />
