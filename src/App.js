@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { get } from "lodash";
-import DashboardPage from "./pages/DashboardPage";
+import DashboardPage from "pages/dashboard/DashboardPage";
 import LoansPage from "pages/loans/LoansPage";
 import LoanPage from "pages/loans/view/LoanPage";
 import UsersPage from "pages/users/UsersPage";
