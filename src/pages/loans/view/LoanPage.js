@@ -1,5 +1,6 @@
-import React, { useContext, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { useQueryClient } from "react-query";
+import { useParams, useNavigationType, useLocation } from "react-router-dom";
 import { useLoan, useSetLoanStatus } from "hooks/loans";
 import { makeStyles } from "@mui/styles";
 import { get } from "lodash";
@@ -14,6 +15,8 @@ import moment from "moment";
 import ButtonLoader from "components/ButtonLoader";
 import Alert from "components/Alert";
 import { AlertContext } from "context/AlertContext";
+import { isAdmin, userLoggedIn } from "util/index";
+import { useSetNotificationStatus } from "hooks/notifications";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,8 +40,15 @@ const LoanPage = () => {
   const { id } = useParams();
   const loanQuery = useLoan(id);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const location = useLocation();
+  const navigationType = useNavigationType();
+  const notificatioState = get(location, "state", {}) || {};
 
   const setLoanStatusResult = useSetLoanStatus();
+
+  const setNotificationStatusResult = useSetNotificationStatus();
+  const setNotificationStatus = get(setNotificationStatusResult, "mutate");
 
   const setLoanStatus = get(setLoanStatusResult, "mutate");
   const isUpdating = get(setLoanStatusResult, "isLoading");
@@ -49,7 +59,7 @@ const LoanPage = () => {
 
   const { setAlert } = useContext(AlertContext);
 
-  const handleBack = () => navigate(`/loans`);
+  const handleBack = () => navigate(-1);
 
   const { _id, amount, monthsCount, duration, status, createdAt } = loan;
 
@@ -92,6 +102,7 @@ const LoanPage = () => {
         id: _id,
         value: {
           status: newValue,
+          approverId: userLoggedIn._id,
         },
       },
       {
@@ -110,6 +121,28 @@ const LoanPage = () => {
     ? "Set to Approved"
     : "Approved";
 
+  useEffect(() => {
+    if (
+      notificatioState.prevPath === "notifications" &&
+      navigationType === "PUSH"
+    ) {
+      setNotificationStatus(
+        {
+          id: notificatioState.notificationId,
+          status: true,
+        },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries([
+              "notificationscount",
+              { userId: isAdmin() ? "" : userLoggedIn._id },
+            ]);
+          },
+        }
+      );
+    }
+  }, [notificatioState.prevPath]);
+
   if (isLoading) return <Loader />;
 
   return (
@@ -126,7 +159,7 @@ const LoanPage = () => {
           <h2 style={{ marginRight: "auto" }} className={classes.title}>
             Loan Details
           </h2>
-          {!isApproved && !isRejected && (
+          {isAdmin() && !isApproved && !isRejected && (
             <ButtonLoader
               variant="outlined"
               onClick={handleSetStatus()}
@@ -137,7 +170,7 @@ const LoanPage = () => {
             </ButtonLoader>
           )}
 
-          {!isApproved && !isRejected && (
+          {isAdmin() && !isApproved && !isRejected && (
             <ButtonLoader
               variant="contained"
               onClick={handleSetStatus(status)}

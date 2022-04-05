@@ -9,10 +9,13 @@ import LoanModal from "./LoanModal";
 import Alert from "components/Alert";
 import { AlertContext } from "context/AlertContext";
 import { useNavigate } from "react-router-dom";
+import { isAdmin, userLoggedIn } from "util/index";
 
 const LoansPage = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const loansQuery = useLoans();
+  const loansQuery = useLoans({
+    userId: isAdmin() ? "" : userLoggedIn._id,
+  });
   const createLoanResult = useCreateLoan();
   const navigate = useNavigate();
 

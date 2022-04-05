@@ -3,8 +3,8 @@ import * as apiLoans from "api/loans";
 
 const key = "loans";
 
-export const useLoans = () => {
-  return useQuery([key], () => apiLoans.getLoans());
+export const useLoans = (pageInfo) => {
+  return useQuery([key], () => apiLoans.getLoans(pageInfo));
 };
 
 export const useLoan = (id) => {

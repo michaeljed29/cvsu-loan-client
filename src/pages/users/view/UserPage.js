@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import { useUser } from "../../../hooks/users";
 import { makeStyles } from "@mui/styles";
@@ -8,8 +9,10 @@ import Button from "@mui/material/Button";
 import Loader from "components/Loader";
 import ViewItem from "components/ViewItem";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, useNavigationType } from "react-router-dom";
 import Badge from "components/Badge";
+import { isAdmin, userLoggedIn } from "util/index";
+import { useSetNotificationStatus } from "hooks/notifications";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,7 +39,15 @@ const UsersPage = () => {
   const user = get(userQuery, "data", []);
   const isLoading = get(userQuery, "isLoading");
 
-  const handleBack = () => navigate(`/users`);
+  const queryClient = useQueryClient();
+  const location = useLocation();
+  const navigationType = useNavigationType();
+  const notificatioState = get(location, "state", {}) || {};
+
+  const setNotificationStatusResult = useSetNotificationStatus();
+  const setNotificationStatus = get(setNotificationStatusResult, "mutate");
+
+  const handleBack = () => navigate(-1, { state: { prevPath: "user" } });
 
   const {
     firstName,
@@ -48,6 +59,28 @@ const UsersPage = () => {
     type,
     initialPassword,
   } = user;
+
+  useEffect(() => {
+    if (
+      notificatioState.prevPath === "notifications" &&
+      navigationType === "PUSH"
+    ) {
+      setNotificationStatus(
+        {
+          id: notificatioState.notificationId,
+          status: true,
+        },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries([
+              "notificationscount",
+              { userId: isAdmin() ? "" : userLoggedIn._id },
+            ]);
+          },
+        }
+      );
+    }
+  }, [notificatioState.prevPath]);
 
   if (isLoading) return <Loader />;
 

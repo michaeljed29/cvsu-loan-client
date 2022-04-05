@@ -1,8 +1,8 @@
 import api from "./util";
 
-export const getLoans = async () => {
+export const getLoans = async ({ userId = "" }) => {
   try {
-    const { data } = await api.get("/loans");
+    const { data } = await api.get(`/loans?userId=${userId}`);
 
     return data;
   } catch (error) {

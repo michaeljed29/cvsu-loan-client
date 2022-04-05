@@ -95,12 +95,17 @@ const LoginPage = () => {
       },
       {
         onSuccess: (data) => {
-          console.log("data", data);
           localStorage.setItem("user", JSON.stringify(data));
-          navigate("/");
+
+          if (data.type !== "admin") {
+            window.location.href = "/loans";
+            // navigate("/loans");
+            return;
+          }
+          window.location.href = "/";
+          // navigate("/");
         },
         onError: (error) => {
-          console.log("error", error.message);
           setIsOpenAlert(true);
           setMessage(error.message);
         },

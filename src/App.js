@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { get } from "lodash";
 import DashboardPage from "./pages/DashboardPage";
 import LoansPage from "pages/loans/LoansPage";
 import LoanPage from "pages/loans/view/LoanPage";
@@ -7,7 +8,7 @@ import UserPage from "./pages/users/view/UserPage";
 import CalculatorPage from "pages/calculator/CalculatorPage";
 import ReportsPage from "./pages/ReportsPage";
 import FaqsPage from "./pages/FaqsPage";
-import NotificationsPage from "./pages/NotificationsPage";
+import NotificationsPage from "pages/notifications/NotificationsPage";
 import { Route, Routes } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
@@ -32,7 +33,10 @@ import QuizIcon from "@mui/icons-material/Quiz";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Link, useNavigate, Navigate } from "react-router-dom";
+import { useNewNotifications } from "hooks/notifications";
 import { isEmpty } from "lodash";
+import { isAdmin, userLoggedIn } from "util/index";
+import { borderRadius } from "@mui/system";
 
 const drawerWidth = 240;
 const pathTitles = {
@@ -50,9 +54,16 @@ const App = (props) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("user")) || {}
-  );
+  // const [user, setUser] = useState(
+  //   JSON.parse(localStorage.getItem("user")) || {}
+  // );
+
+  const newNotificationsQuery = useNewNotifications({
+    userId: isAdmin() ? "" : userLoggedIn._id,
+  });
+
+  const newNotificationCount = get(newNotificationsQuery, "data.count", 0);
+  const isLoading = get(newNotificationsQuery, "isLoading");
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -68,19 +79,22 @@ const App = (props) => {
       <Toolbar />
       <Divider />
       <List>
-        <ListItem
-          selected={pathname === "/"}
-          button
-          key="Dashboard"
-          component={Link}
-          to="/"
-          onClick={handleDrawerToggle}
-        >
-          <ListItemIcon>
-            <DashboardIcon />
-          </ListItemIcon>
-          <ListItemText primary="Dashboard" />
-        </ListItem>
+        {isAdmin() && (
+          <ListItem
+            selected={pathname === "/"}
+            button
+            key="Dashboard"
+            component={Link}
+            to="/"
+            onClick={handleDrawerToggle}
+          >
+            <ListItemIcon>
+              <DashboardIcon />
+            </ListItemIcon>
+            <ListItemText primary="Dashboard" />
+          </ListItem>
+        )}
+
         <ListItem
           selected={pathname.includes("/loans")}
           button
@@ -94,19 +108,23 @@ const App = (props) => {
           </ListItemIcon>
           <ListItemText primary="Loans" />
         </ListItem>
-        <ListItem
-          selected={pathname.includes("/users")}
-          button
-          key="Users"
-          component={Link}
-          to="/users"
-          onClick={handleDrawerToggle}
-        >
-          <ListItemIcon>
-            <GroupIcon />
-          </ListItemIcon>
-          <ListItemText primary="Users" />
-        </ListItem>
+
+        {isAdmin() && (
+          <ListItem
+            selected={pathname.includes("/users")}
+            button
+            key="Users"
+            component={Link}
+            to="/users"
+            onClick={handleDrawerToggle}
+          >
+            <ListItemIcon>
+              <GroupIcon />
+            </ListItemIcon>
+            <ListItemText primary="Users" />
+          </ListItem>
+        )}
+
         <ListItem
           selected={pathname.includes("/calculator")}
           button
@@ -120,19 +138,23 @@ const App = (props) => {
           </ListItemIcon>
           <ListItemText primary="Calculator" />
         </ListItem>
-        <ListItem
-          selected={pathname.includes("/reports")}
-          button
-          key="Reports"
-          component={Link}
-          to="/reports"
-          onClick={handleDrawerToggle}
-        >
-          <ListItemIcon>
-            <AssessmentIcon />
-          </ListItemIcon>
-          <ListItemText primary="Reports" />
-        </ListItem>
+
+        {isAdmin() && (
+          <ListItem
+            selected={pathname.includes("/reports")}
+            button
+            key="Reports"
+            component={Link}
+            to="/reports"
+            onClick={handleDrawerToggle}
+          >
+            <ListItemIcon>
+              <AssessmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="Reports" />
+          </ListItem>
+        )}
+
         <ListItem
           selected={pathname.includes("/faqs")}
           button
@@ -161,6 +183,20 @@ const App = (props) => {
             <NotificationsIcon />
           </ListItemIcon>
           <ListItemText primary="Notifications" />
+
+          {newNotificationCount > 0 && !isLoading && (
+            <span
+              style={{
+                background: "#175a08",
+                padding: "2px 8px",
+                color: "#fff",
+                borderRadius: "50%",
+                fontSize: 13,
+              }}
+            >
+              {newNotificationCount}
+            </span>
+          )}
         </ListItem>
         <ListItem button key="Logout" onClick={handleLogout}>
           <ListItemIcon>
@@ -175,7 +211,7 @@ const App = (props) => {
   const container =
     window !== undefined ? () => window().document.body : undefined;
 
-  if (isEmpty(user)) return <Navigate to="/login" replace={true} />;
+  if (isEmpty(userLoggedIn)) return <Navigate to="/login" replace={true} />;
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -201,7 +237,9 @@ const App = (props) => {
             {pathTitles[pathname]}
           </Typography>
           <div style={{ flex: 1 }}></div>
-          <p style={{ margineLeft: "auto" }}>{`Hello, ${user.firstName}`}</p>
+          <p
+            style={{ margineLeft: "auto" }}
+          >{`Hello, ${userLoggedIn.firstName}`}</p>
         </Toolbar>
       </AppBar>
       <Box
@@ -253,13 +291,22 @@ const App = (props) => {
         <Toolbar />
         <Routes>
           <Route>
-            <Route path="/" element={<DashboardPage />} />
+            {<Route path="/" element={<DashboardPage />} />}
+
             <Route path="/loans/:id" element={<LoanPage />} />
             <Route path="/loans" element={<LoansPage />} />
-            <Route path="/users/:id" element={<UserPage />} />
-            <Route path="/users" element={<UsersPage />} />
+
+            {isAdmin() && (
+              <>
+                <Route path="/users/:id" element={<UserPage />} />
+                <Route path="/users" element={<UsersPage />} />
+              </>
+            )}
+
             <Route path="/calculator" element={<CalculatorPage />} />
-            <Route path="/reports" element={<ReportsPage />} />
+
+            {isAdmin() && <Route path="/reports" element={<ReportsPage />} />}
+
             <Route path="/faqs" element={<FaqsPage />} />
             <Route path="/notifications" element={<NotificationsPage />} />
           </Route>

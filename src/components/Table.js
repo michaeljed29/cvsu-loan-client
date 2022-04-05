@@ -34,6 +34,11 @@ import Stack from "@mui/material/Stack";
 import EditIcon from "@mui/icons-material/Edit";
 
 function descendingComparator(a, b, orderBy) {
+  // if (orderBy === "createdAt") {
+  //   return (
+  //     new Date(get(b, orderBy)).valueOf() - new Date(get(a, orderBy)).valueOf()
+  //   );
+  // }
   if (get(b, orderBy) < get(a, orderBy)) {
     return -1;
   }
@@ -390,8 +395,6 @@ export default function EnhancedTable(props) {
                   .map((row, index) => {
                     const isItemSelected = isSelected(row.name);
                     const labelId = `enhanced-table-checkbox-${index}`;
-
-                    console.log("rowsss", row);
 
                     return (
                       <TableRow
