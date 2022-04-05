@@ -109,15 +109,6 @@ const Card = (props) => {
   const approver = get(notification, "approverId", {});
   const loan = get(notification, "loanId", {});
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const location = useLocation();
-  const navigationType = useNavigationType();
-  const prevPath = get(location, "state.prevPath", "");
-
-  const setNotificationStatusResult = useSetNotificationStatus();
-
-  const setNotificationStatus = get(setNotificationStatusResult, "mutate");
-
   const isPending = type === "pending";
   const isProcessing = type === "processing";
   const isApproved = type === "approved";
