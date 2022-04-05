@@ -37,6 +37,7 @@ import { useNewNotifications } from "hooks/notifications";
 import { isEmpty } from "lodash";
 import { isAdmin, userLoggedIn } from "util/index";
 import { borderRadius } from "@mui/system";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const drawerWidth = 240;
 const pathTitles = {
@@ -58,6 +59,8 @@ const App = (props) => {
   //   JSON.parse(localStorage.getItem("user")) || {}
   // );
 
+  const matches = useMediaQuery("(max-width:600px)");
+
   const newNotificationsQuery = useNewNotifications({
     userId: isAdmin() ? "" : userLoggedIn._id,
   });
@@ -65,8 +68,8 @@ const App = (props) => {
   const newNotificationCount = get(newNotificationsQuery, "data.count", 0);
   const isLoading = get(newNotificationsQuery, "isLoading");
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
+  const handleDrawerToggle = (e) => {
+    if (matches) setMobileOpen(!mobileOpen);
   };
 
   const handleLogout = () => {

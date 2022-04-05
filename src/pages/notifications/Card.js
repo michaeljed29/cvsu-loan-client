@@ -132,7 +132,7 @@ const Card = (props) => {
     ? "is processing your"
     : isApproved
     ? "approved your"
-    : "rejected your loan";
+    : "rejected your";
 
   const name = isAdmin()
     ? `${user.firstName} ${user.lastName}`
