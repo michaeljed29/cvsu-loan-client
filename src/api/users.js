@@ -44,6 +44,21 @@ export const updateUser = async ({ id, value }) => {
   }
 };
 
+export const changePassword = async ({ id, password }) => {
+  try {
+    const { data } = await api.patch(`/users/changePassword`, {
+      userId: id,
+      password,
+    });
+
+    if (data.message) throw new Error(data.message);
+
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 export const deleteUser = async (id) => {
   try {
     const { data } = await api.delete(`/users/${id}`);

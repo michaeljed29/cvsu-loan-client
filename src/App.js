@@ -6,6 +6,7 @@ import LoanPage from "pages/loans/view/LoanPage";
 import UsersPage from "pages/users/UsersPage";
 import UserPage from "./pages/users/view/UserPage";
 import CalculatorPage from "pages/calculator/CalculatorPage";
+import ProfilePage from "pages/ProfilePage";
 import ReportsPage from "./pages/ReportsPage";
 import FaqsPage from "./pages/FaqsPage";
 import NotificationsPage from "pages/notifications/NotificationsPage";
@@ -39,6 +40,8 @@ import { isAdmin, userLoggedIn } from "util/index";
 import { borderRadius } from "@mui/system";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import icon from "images/cvsu.jpg";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import { useUser } from "hooks/users";
 
 const drawerWidth = 240;
 const pathTitles = {
@@ -49,6 +52,7 @@ const pathTitles = {
   "/reports": "Reports",
   "/faqs": "FAQs",
   "/notifications": "Notifications",
+  "/profile": "Profile",
 };
 
 const App = (props) => {
@@ -56,9 +60,7 @@ const App = (props) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  // const [user, setUser] = useState(
-  //   JSON.parse(localStorage.getItem("user")) || {}
-  // );
+  const userQuery = useUser(userLoggedIn._id);
 
   const matches = useMediaQuery("(max-width:600px)");
 
@@ -66,6 +68,7 @@ const App = (props) => {
     userId: isAdmin() ? "" : userLoggedIn._id,
   });
 
+  const user = get(userQuery, "data", {});
   const newNotificationCount = get(newNotificationsQuery, "data.count", 0);
   const isLoading = get(newNotificationsQuery, "isLoading");
 
@@ -175,6 +178,20 @@ const App = (props) => {
       </List>
       <Divider />
       <List>
+        <ListItem
+          selected={pathname.includes("/profile")}
+          button
+          key="Profile"
+          component={Link}
+          to="/profile"
+          onClick={handleDrawerToggle}
+        >
+          <ListItemIcon>
+            <AccountBoxIcon />
+          </ListItemIcon>
+          <ListItemText primary="Profile" />
+        </ListItem>
+
         {isAdmin() && (
           <ListItem
             selected={pathname.includes("/reports")}
@@ -244,9 +261,11 @@ const App = (props) => {
             {pathTitles[pathname]}
           </Typography>
           <div style={{ flex: 1 }}></div>
-          <p
-            style={{ margineLeft: "auto" }}
-          >{`Hello, ${userLoggedIn.firstName}`}</p>
+          <p style={{ margineLeft: "auto" }}>{`Hello, ${get(
+            user,
+            "firstName",
+            ""
+          )}`}</p>
         </Toolbar>
       </AppBar>
       <Box
@@ -311,6 +330,8 @@ const App = (props) => {
             )}
 
             <Route path="/calculator" element={<CalculatorPage />} />
+
+            <Route path="/profile" element={<ProfilePage />} />
 
             {isAdmin() && <Route path="/reports" element={<ReportsPage />} />}
 

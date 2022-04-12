@@ -115,8 +115,46 @@ const UserModal = (props) => {
           name="department"
           onChange={handleChange}
         >
-          <MenuItem value={"Operations"}>Operations</MenuItem>
-          <MenuItem value={"IT"}>IT</MenuItem>
+          <MenuItem
+            value={
+              "College Of Agriculture, Food, Environment And Natural Resources"
+            }
+          >
+            College Of Agriculture, Food, Environment And Natural Resources
+          </MenuItem>
+          <MenuItem value={"College Of Arts And Science"}>
+            College Of Arts And Science
+          </MenuItem>
+          <MenuItem value={"College Of Criminal Justice"}>
+            College Of Criminal Justice
+          </MenuItem>
+          <MenuItem value={"College Of Education"}>
+            College Of Education
+          </MenuItem>
+          <MenuItem
+            value={"College Of Economics, Management And Development Studies"}
+          >
+            College Of Economics, Management And Development Studies
+          </MenuItem>
+          <MenuItem value={"College Of Engineering And Information Technology"}>
+            College Of Engineering And Information Technology
+          </MenuItem>
+          <MenuItem value={"College Of Nursing"}>College Of Nursing</MenuItem>
+          <MenuItem
+            value={"College Of Sports, Physical Education And Recreation"}
+          >
+            College Of Sports, Physical Education And Recreation
+          </MenuItem>
+          <MenuItem
+            value={"College Of Veterinary Medicine And Biomedical Sciences"}
+          >
+            College Of Veterinary Medicine And Biomedical Sciences
+          </MenuItem>
+          <MenuItem
+            value={"Office Of The Graduate Studies / Open Learning College"}
+          >
+            Office Of The Graduate Studies / Open Learning College
+          </MenuItem>
         </Select>
       </FormControl>
       <TextField

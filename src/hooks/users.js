@@ -26,3 +26,7 @@ export const useDeleteUser = () => {
 export const useLogin = () => {
   return useMutation(apiUsers.login);
 };
+
+export const useChangePassword = () => {
+  return useMutation(apiUsers.changePassword);
+};

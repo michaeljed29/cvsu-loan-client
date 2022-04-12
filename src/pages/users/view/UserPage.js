@@ -36,7 +36,7 @@ const UsersPage = () => {
   const userQuery = useUser(id);
   const navigate = useNavigate();
 
-  const user = get(userQuery, "data", []);
+  const user = get(userQuery, "data", {});
   const isLoading = get(userQuery, "isLoading");
 
   const queryClient = useQueryClient();
