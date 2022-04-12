@@ -4,6 +4,8 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Button from "@mui/material/Button";
+import DownloadIcon from "@mui/icons-material/Download";
 
 const Faqs = () => {
   const [expanded, setExpanded] = useState(false);
@@ -16,6 +18,20 @@ const Faqs = () => {
 
   return (
     <div>
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button
+          component="a"
+          variant="contained"
+          style={{ margin: "20px 0" }}
+          href="./loan-form.xlsx"
+          download
+          startIcon={<DownloadIcon />}
+          target="_blank"
+        >
+          Download Form
+        </Button>
+      </div>
+
       <Accordion
         expanded={expanded === "panel1"}
         onChange={handleChange("panel1")}
@@ -115,6 +131,88 @@ const Faqs = () => {
           <Typography>
             Yes, we are checking it and monitor about all the request of
             borrower.
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion
+        expanded={expanded === "panel6"}
+        onChange={handleChange("panel6")}
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel6bh-content"
+          id="panel6bh-header"
+        >
+          <Typography sx={sx}>
+            6. What are the different types of loan you are offering?
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <ul style={{ paddingLeft: 16 }}>
+            <li>Regular Loan</li>
+            <li>Multipurpose Loan</li>
+            <li>Share Capital Loan</li>
+            <li>Emergency Loan</li>
+            <li>Commodity Loan</li>
+            <li>Salary Loan</li>
+            <li>Travel Loan</li>
+            <li>Consolidated Loan</li>
+          </ul>
+        </AccordionDetails>
+      </Accordion>
+
+      <Accordion
+        expanded={expanded === "panel7"}
+        onChange={handleChange("panel7")}
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel7bh-content"
+          id="panel7bh-header"
+        >
+          <Typography sx={sx}>
+            7. What are the requirements for each type of loan?
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography style={{ marginBottom: 10 }}>
+            a. Regular Loan (loanable amount is same amount of your share
+            capital) Filled-Up Application Form with Member/borrower’s signature
+            Payslip
+          </Typography>
+          <Typography style={{ marginBottom: 10 }}>
+            b. Multipurpose Loan (maximum of P150,000) Filled-Up Application
+            Form with Member/borrower’s signature Payslip Co-Maker (Co-maker
+            must signed to the application form of the member/borrower)
+          </Typography>
+          <Typography style={{ marginBottom: 10 }}>
+            c. Share Capital Loan (maximum amount up to P50,000) Filled-Up
+            Application Form with Member signature Payslip (please take note
+            that cooperative will allow only if the member/borrower’s still have
+            capacity to pay)
+          </Typography>
+          <Typography style={{ marginBottom: 10 }}>
+            d. Emergency Loan (maximum amount up to P20,000) Filled-Up
+            Application Form with Member/borrower’s signature Payslip Proof that
+            the loan will be used in house construction due to typhoon and other
+            fortuitous events, hospitalization, education, and any other
+            emergency cases.
+          </Typography>
+          <Typography style={{ marginBottom: 10 }}>
+            e. Commodity Loan (depends on the price of item but not to exceed
+            P100,000) Filled-Up Application Form with Member/borrower’s
+            signature Payslip Quotation from accredited suppliers of CvSUMPC
+            (example: Abenson)
+          </Typography>
+          <Typography style={{ marginBottom: 10 }}>
+            f. Salary Loan (maximum of P200,000) Filled-Up Application Form with
+            Member/borrower’s signature Payslip Co-Maker (Co-maker must signed
+            to the application form of the member/borrower)
+          </Typography>
+          <Typography>
+            g. Travel Loan (maximum of P100,000) Filled-Up Application Form with
+            Member/borrower’s signature Payslip Note: Amount of loan will be
+            approved based on the capacity to pay of member/borrower.
           </Typography>
         </AccordionDetails>
       </Accordion>

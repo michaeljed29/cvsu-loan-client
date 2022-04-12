@@ -38,6 +38,7 @@ import { isEmpty } from "lodash";
 import { isAdmin, userLoggedIn } from "util/index";
 import { borderRadius } from "@mui/system";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import icon from "images/cvsu.jpg";
 
 const drawerWidth = 240;
 const pathTitles = {
@@ -79,7 +80,9 @@ const App = (props) => {
 
   const drawer = (
     <div>
-      <Toolbar />
+      <Toolbar>
+        <img style={{ height: 50, margin: "0 auto" }} src={icon} />
+      </Toolbar>
       <Divider />
       <List>
         {isAdmin() && (
