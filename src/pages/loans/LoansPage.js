@@ -90,6 +90,10 @@ const LoansPage = () => {
             },
           },
           {
+            field: "verificationCode",
+            label: "Verification Code",
+          },
+          {
             field: "status",
             label: "Status",
             renderCell: (row) => {
@@ -125,6 +129,7 @@ const LoansPage = () => {
           "monthsCount",
           "createdAt",
           "status",
+          "verificationCode",
         ]}
         onAdd={onAdd}
         onClickRow={handleClickRow}

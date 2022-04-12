@@ -17,6 +17,7 @@ import Alert from "components/Alert";
 import { AlertContext } from "context/AlertContext";
 import { isAdmin, userLoggedIn } from "util/index";
 import { useSetNotificationStatus } from "hooks/notifications";
+import Tooltip from "@mui/material/Tooltip";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,7 +62,15 @@ const LoanPage = () => {
 
   const handleBack = () => navigate(-1);
 
-  const { _id, amount, monthsCount, duration, status, createdAt } = loan;
+  const {
+    _id,
+    amount,
+    monthsCount,
+    duration,
+    status,
+    createdAt,
+    verificationCode,
+  } = loan;
 
   const isPending = status === "pending";
   const isProcessing = status === "processing";
@@ -156,9 +165,47 @@ const LoanPage = () => {
             marginBottom: 30,
           }}
         >
-          <h2 style={{ marginRight: "auto" }} className={classes.title}>
-            Loan Details
-          </h2>
+          <div
+            style={{
+              marginRight: "auto",
+              fontWeight: 700,
+              fontSize: 19,
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <h2 className={classes.title}>Loan Details</h2>
+            {verificationCode && (
+              <Tooltip title="Verification Code" placement="right" arrow>
+                <div
+                  style={{
+                    marginLeft: 15,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    border: "1px solid #155907",
+                    padding: "2px 5px",
+                    borderRadius: 4,
+                    background: "#ebffe7",
+                    fontSize: 15,
+                    cursor: "pointer",
+                    color: "#155907",
+                  }}
+                >
+                  <p
+                    style={{
+                      fontWeight: 800,
+                      letterSpacing: 1,
+                    }}
+                  >
+                    {verificationCode}
+                  </p>
+                </div>
+              </Tooltip>
+            )}
+          </div>
+
           {isAdmin() && !isApproved && !isRejected && (
             <ButtonLoader
               variant="outlined"

@@ -80,7 +80,7 @@ const App = (props) => {
 
   const drawer = (
     <div>
-      <Toolbar>
+      <Toolbar style={{ background: "#ffc810" }}>
         <img style={{ height: 50, margin: "0 auto" }} src={icon} />
       </Toolbar>
       <Divider />
@@ -145,22 +145,6 @@ const App = (props) => {
           <ListItemText primary="Calculator" />
         </ListItem>
 
-        {isAdmin() && (
-          <ListItem
-            selected={pathname.includes("/reports")}
-            button
-            key="Reports"
-            component={Link}
-            to="/reports"
-            onClick={handleDrawerToggle}
-          >
-            <ListItemIcon>
-              <AssessmentIcon />
-            </ListItemIcon>
-            <ListItemText primary="Reports" />
-          </ListItem>
-        )}
-
         <ListItem
           selected={pathname.includes("/notifications")}
           button
@@ -191,6 +175,22 @@ const App = (props) => {
       </List>
       <Divider />
       <List>
+        {isAdmin() && (
+          <ListItem
+            selected={pathname.includes("/reports")}
+            button
+            key="Reports"
+            component={Link}
+            to="/reports"
+            onClick={handleDrawerToggle}
+          >
+            <ListItemIcon>
+              <AssessmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="Reports" />
+          </ListItem>
+        )}
+
         <ListItem
           selected={pathname.includes("/faqs")}
           button
