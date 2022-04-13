@@ -43,3 +43,15 @@ export const setLoanStatus = async ({ id, value }) => {
     throw new Error(error.message);
   }
 };
+
+export const setLoanMonthly = async ({ id, amount }) => {
+  try {
+    const { data } = await api.patch(`/loans/setMonthly/${id}`, { amount });
+
+    if (data.message) throw new Error(data.message);
+
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};

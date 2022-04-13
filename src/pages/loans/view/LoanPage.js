@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
 import { useParams, useNavigationType, useLocation } from "react-router-dom";
-import { useLoan, useSetLoanStatus } from "hooks/loans";
+import { useLoan, useSetLoanStatus, useSetLoanMonthly } from "hooks/loans";
 import { makeStyles } from "@mui/styles";
 import { get } from "lodash";
 import Grid from "@mui/material/Grid";
@@ -18,6 +18,9 @@ import { AlertContext } from "context/AlertContext";
 import { isAdmin, userLoggedIn } from "util/index";
 import { useSetNotificationStatus } from "hooks/notifications";
 import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
+import EditIcon from "@mui/icons-material/Edit";
+import MonthlyModal from "./MonthlyModal";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -45,6 +48,7 @@ const LoanPage = () => {
   const location = useLocation();
   const navigationType = useNavigationType();
   const notificatioState = get(location, "state", {}) || {};
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const setLoanStatusResult = useSetLoanStatus();
 
@@ -53,6 +57,10 @@ const LoanPage = () => {
 
   const setLoanStatus = get(setLoanStatusResult, "mutate");
   const isUpdating = get(setLoanStatusResult, "isLoading");
+
+  const setLoanMonthlyResult = useSetLoanMonthly();
+  const setLoanMonthly = get(setLoanMonthlyResult, "mutate");
+  const isUpdatingMonthly = get(setLoanMonthlyResult, "isLoading");
 
   const loan = get(loanQuery, "data", []);
   const refetchLoan = get(loanQuery, "refetch");
@@ -70,6 +78,8 @@ const LoanPage = () => {
     status,
     createdAt,
     verificationCode,
+    loanType,
+    monthly,
   } = loan;
 
   const isPending = status === "pending";
@@ -152,11 +162,38 @@ const LoanPage = () => {
     }
   }, [notificatioState.prevPath]);
 
+  const handleSubmit = (amount, { resetForm, setAmount }) => {
+    setLoanMonthly(
+      {
+        id: _id,
+        amount,
+      },
+      {
+        onSuccess: (data) => {
+          const newMonthly = get(data, "monthly", 0);
+          refetchLoan();
+          setIsFormOpen(false);
+          resetForm();
+          setAmount(newMonthly);
+          setAlert("Loan monthly successfully updated.");
+        },
+      }
+    );
+  };
+
   if (isLoading) return <Loader />;
 
   return (
     <>
       <Alert />
+      <MonthlyModal
+        title={"Edit Monthly"}
+        onClose={() => setIsFormOpen(false)}
+        isOpen={isFormOpen}
+        onSubmit={handleSubmit}
+        loading={isUpdatingMonthly}
+        monthly={monthly}
+      />
       <div className={classes.root}>
         <div
           style={{
@@ -233,10 +270,35 @@ const LoanPage = () => {
             <ViewItem label="Name:">{`${firstName} ${lastName}`}</ViewItem>
           </Grid>
           <Grid item xs={12} md={4} lg={3}>
-            <ViewItem label="Position:">{position}</ViewItem>
+            <ViewItem label="Type of Loan:">{loanType}</ViewItem>
           </Grid>
           <Grid item xs={12} md={4} lg={3}>
             <ViewItem label="Duration:">{durationString}</ViewItem>
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <ViewItem
+              label={
+                <div style={{ position: "relative" }}>
+                  <span>Monthly:</span>
+                  <Tooltip title="Edit Monthly" placement="right" arrow>
+                    <IconButton
+                      style={{ left: 55, top: -5, position: "absolute" }}
+                      aria-label="delete"
+                      size="small"
+                      onClick={() => {
+                        setIsFormOpen(true);
+                      }}
+                    >
+                      <EditIcon sx={{ fontSize: 18, color: "#42a5f5" }} />
+                    </IconButton>
+                  </Tooltip>
+                </div>
+              }
+            >
+              <div>
+                <strong>{`₱ ${monthly}`}</strong>
+              </div>
+            </ViewItem>
           </Grid>
         </Grid>
 
@@ -252,10 +314,7 @@ const LoanPage = () => {
             </ViewItem>
           </Grid>
           <Grid item xs={12} md={4} lg={3}>
-            <ViewItem
-              className="amount"
-              label="Amount:"
-            >{`₱ ${amount}`}</ViewItem>
+            <ViewItem label="Amount:">{`₱ ${amount}`}</ViewItem>
           </Grid>
         </Grid>
 

@@ -18,3 +18,7 @@ export const useCreateLoan = () => {
 export const useSetLoanStatus = () => {
   return useMutation(apiLoans.setLoanStatus);
 };
+
+export const useSetLoanMonthly = () => {
+  return useMutation(apiLoans.setLoanMonthly);
+};

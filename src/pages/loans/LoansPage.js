@@ -70,8 +70,8 @@ const LoansPage = () => {
             },
           },
           {
-            field: "userId.position",
-            label: "Position",
+            field: "loanType",
+            label: "Type of Loan",
           },
           {
             field: "monthsCount",
@@ -114,6 +114,12 @@ const LoansPage = () => {
             label: "Amount",
             numeric: true,
             renderCell: (row) => `₱ ${row.amount}`,
+          },
+          {
+            field: "monthly",
+            label: "Monthly",
+            numeric: true,
+            renderCell: (row) => <strong>{`₱ ${row.monthly}`}</strong>,
           },
           {
             field: "createdAt",

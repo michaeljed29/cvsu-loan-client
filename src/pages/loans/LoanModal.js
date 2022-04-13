@@ -21,6 +21,7 @@ const LoanModal = (props) => {
 
   const [amount, setAmount] = useState(0);
   const [period, setPeriod] = useState("");
+  const [loanType, setLoanType] = useState("");
   const [monthsCount, setMonthsCount] = useState(0);
   const [monthData, setMonthData] = useState([]);
 
@@ -44,6 +45,8 @@ const LoanModal = (props) => {
     }
     setPeriod(e.target.value);
   };
+
+  const handleChangeType = (e) => setLoanType(e.target.value);
 
   const handleChangeMonthsCount = (e) => setMonthsCount(e.target.value);
 
@@ -70,6 +73,7 @@ const LoanModal = (props) => {
             amount: parseFloat(amount),
             duration: period,
             monthsCount: parseInt(monthsCount),
+            loanType,
           },
           { resetForm }
         )
@@ -78,6 +82,39 @@ const LoanModal = (props) => {
       loading={loading}
       buttonProps={{ disabled: disabled || loading }}
     >
+      <FormControl
+        style={{ marginBottom: 20 }}
+        fullWidth
+        variant="filled"
+        margin="none"
+      >
+        <InputLabel id="demo-simple-select-label">Type of Loan</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={loanType}
+          label="Type of Loan"
+          name="loanType"
+          onChange={handleChangeType}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <MoneyIcon />
+              </InputAdornment>
+            ),
+          }}
+        >
+          <MenuItem value={"Regular Loan"}>Regular Loan</MenuItem>
+          <MenuItem value={"Multipurpose Loan"}>Multipurpose Loan</MenuItem>
+          <MenuItem value={"Share Capital Loan"}>Share Capital Loan</MenuItem>
+          <MenuItem value={"Emergency Loan"}>Emergency Loan</MenuItem>
+          <MenuItem value={"Commodity Loan"}>Commodity Loan</MenuItem>
+          <MenuItem value={"Salary Loan"}>Salary Loan</MenuItem>
+          <MenuItem value={"Travel Loan"}>Travel Loan</MenuItem>
+          <MenuItem value={"Consolidated Loan"}>Consolidated Loan</MenuItem>
+        </Select>
+      </FormControl>
+
       <TextField
         style={{ marginBottom: 20 }}
         InputProps={{
