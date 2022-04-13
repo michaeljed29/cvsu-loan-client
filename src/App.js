@@ -261,11 +261,9 @@ const App = (props) => {
             {pathTitles[pathname]}
           </Typography>
           <div style={{ flex: 1 }}></div>
-          <p style={{ margineLeft: "auto" }}>{`Hello, ${get(
-            user,
-            "firstName",
-            ""
-          )}`}</p>
+          <p style={{ margineLeft: "auto" }}>{`Hello, ${
+            isAdmin() ? "Admin" : get(user, "firstName", "")
+          }`}</p>
         </Toolbar>
       </AppBar>
       <Box
