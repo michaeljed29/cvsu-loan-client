@@ -280,18 +280,20 @@ const LoanPage = () => {
               label={
                 <div style={{ position: "relative" }}>
                   <span>Monthly:</span>
-                  <Tooltip title="Edit Monthly" placement="right" arrow>
-                    <IconButton
-                      style={{ left: 55, top: -5, position: "absolute" }}
-                      aria-label="delete"
-                      size="small"
-                      onClick={() => {
-                        setIsFormOpen(true);
-                      }}
-                    >
-                      <EditIcon sx={{ fontSize: 18, color: "#42a5f5" }} />
-                    </IconButton>
-                  </Tooltip>
+                  {isAdmin() ? (
+                    <Tooltip title="Edit Monthly" placement="right" arrow>
+                      <IconButton
+                        style={{ left: 55, top: -5, position: "absolute" }}
+                        aria-label="delete"
+                        size="small"
+                        onClick={() => {
+                          setIsFormOpen(true);
+                        }}
+                      >
+                        <EditIcon sx={{ fontSize: 18, color: "#42a5f5" }} />
+                      </IconButton>
+                    </Tooltip>
+                  ) : null}
                 </div>
               }
             >
