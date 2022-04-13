@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://cvsu-loan-server.herokuapp.com/",
+  baseURL: process.env.REACT_APP_SERVER_URI,
 });
 
 api.interceptors.request.use((req) => {
