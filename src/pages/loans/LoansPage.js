@@ -23,7 +23,7 @@ const LoansPage = () => {
 
   const { setAlert } = useContext(AlertContext);
 
-  const loans = get(loansQuery, "data", []);
+  const loans = get(loansQuery, "data", []).filter((loan) => loan.userId);
   const refetchLoans = get(loansQuery, "refetch");
   const isLoading = get(loansQuery, "isLoading");
 

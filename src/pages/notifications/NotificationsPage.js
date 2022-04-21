@@ -16,7 +16,9 @@ const NotificationsPage = () => {
     userId: isAdmin ? "" : user._id,
   });
 
-  const notifications = get(notificationsQuery, "data", []);
+  const notifications = get(notificationsQuery, "data", []).filter(
+    (notification) => notification.userId
+  );
   const isLoading = get(notificationsQuery, "isLoading");
 
   const indexOfLastNotification = currentPage * notificationPerPage;
