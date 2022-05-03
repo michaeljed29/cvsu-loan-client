@@ -165,7 +165,7 @@ EnhancedTableHead.propTypes = {
 };
 
 const EnhancedTableToolbar = (props) => {
-  const { numSelected, onSearch, onAdd, title } = props;
+  const { numSelected, onSearch, onAdd, title, isHideButton } = props;
   const [search, setSearch] = React.useState("");
 
   React.useEffect(() => {
@@ -205,14 +205,16 @@ const EnhancedTableToolbar = (props) => {
           >
             {title}
           </Typography>
-          <Button
-            size="small"
-            style={{ marginLeft: 15 }}
-            variant="contained"
-            onClick={onAdd}
-          >
-            Add
-          </Button>
+          {!isHideButton && (
+            <Button
+              size="small"
+              style={{ marginLeft: 15 }}
+              variant="contained"
+              onClick={onAdd}
+            >
+              Add
+            </Button>
+          )}
         </>
       )}
 
@@ -263,6 +265,7 @@ export default function EnhancedTable(props) {
     onEdit,
     title = "Table",
     searchKeys = [],
+    isHideButton,
   } = props;
 
   const [order, setOrder] = React.useState("asc");
@@ -361,6 +364,7 @@ export default function EnhancedTable(props) {
           onSearch={handleSearch}
           onAdd={onAdd}
           title={title}
+          isHideButton={isHideButton}
         />
         <TableContainer>
           <Table

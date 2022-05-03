@@ -3,6 +3,7 @@ import { get } from "lodash";
 import DashboardPage from "pages/dashboard/DashboardPage";
 import LoansPage from "pages/loans/LoansPage";
 import LoanPage from "pages/loans/view/LoanPage";
+import PaymentsPage from "./pages/payments/PaymentsPage";
 import UsersPage from "pages/users/UsersPage";
 import UserPage from "./pages/users/view/UserPage";
 import CalculatorPage from "pages/calculator/CalculatorPage";
@@ -42,11 +43,13 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import icon from "images/cvsu.jpg";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import { useUser } from "hooks/users";
+import PaymentsIcon from "@mui/icons-material/Payments";
 
 const drawerWidth = 240;
 const pathTitles = {
   "/": "Dashboard",
   "/loans": "Loans",
+  "/payments": "Payments",
   "/users": "Users",
   "/calculator": "Calculator",
   "/reports": "Reports",
@@ -117,6 +120,22 @@ const App = (props) => {
           </ListItemIcon>
           <ListItemText primary="Loans" />
         </ListItem>
+
+        {isAdmin() && (
+          <ListItem
+            selected={pathname.includes("/payments")}
+            button
+            key="Payments"
+            component={Link}
+            to="/payments"
+            onClick={handleDrawerToggle}
+          >
+            <ListItemIcon>
+              <PaymentsIcon />
+            </ListItemIcon>
+            <ListItemText primary="Payments" />
+          </ListItem>
+        )}
 
         {isAdmin() && (
           <ListItem
@@ -319,6 +338,8 @@ const App = (props) => {
 
             <Route path="/loans/:id" element={<LoanPage />} />
             <Route path="/loans" element={<LoansPage />} />
+
+            {isAdmin() && <Route path="/payments" element={<PaymentsPage />} />}
 
             {isAdmin() && (
               <>
