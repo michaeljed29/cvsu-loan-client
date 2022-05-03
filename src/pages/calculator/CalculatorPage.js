@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   instruction: {
     // fontStyle: "italic",
     fontSize: 18,
-    marginBottom: 20,
+
     color: "",
   },
   btnCalculate: {
@@ -63,6 +63,13 @@ const useStyles = makeStyles((theme) => ({
       fontSize: 20,
       color: "initial",
     },
+  },
+  note: {
+    fontStyle: "italic",
+    color: "#8c8c8c",
+    marginTop: 5,
+    fontSize: 14,
+    marginBottom: 20,
   },
 }));
 
@@ -125,6 +132,10 @@ const CalculatorPage = () => {
         <Paper className={classes.paper} elevation={2}>
           <p className={classes.instruction}>
             Please fill up all needed information
+          </p>
+          <p className={classes.note}>
+            Note: This estimation may be differ from the actual loan from the
+            office
           </p>
 
           <TextField
