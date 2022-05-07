@@ -7,8 +7,8 @@ export const useLoans = (pageInfo) => {
   return useQuery([key], () => apiLoans.getLoans(pageInfo));
 };
 
-export const useLoan = (id) => {
-  return useQuery([key, id], () => apiLoans.getLoan(id));
+export const useLoan = (id, options) => {
+  return useQuery([key, id], () => apiLoans.getLoan(id), options);
 };
 
 export const useCreateLoan = () => {
@@ -21,4 +21,8 @@ export const useSetLoanStatus = () => {
 
 export const useSetLoanMonthly = () => {
   return useMutation(apiLoans.setLoanMonthly);
+};
+
+export const useSetLoanProceeds = () => {
+  return useMutation(apiLoans.setLoanProceeds);
 };

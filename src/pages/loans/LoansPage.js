@@ -111,9 +111,15 @@ const LoansPage = () => {
           },
           {
             field: "amount",
-            label: "Amount",
+            label: "Loan Amount",
             numeric: true,
             renderCell: (row) => `₱ ${row.amount}`,
+          },
+          {
+            field: "loanProceedsAmount",
+            label: "Loan Proceeds",
+            numeric: true,
+            renderCell: (row) => `₱ ${row.loanProceedsAmount}`,
           },
           {
             field: "monthly",
@@ -136,6 +142,7 @@ const LoansPage = () => {
           "createdAt",
           "status",
           "verificationCode",
+          "loanType",
         ]}
         onAdd={onAdd}
         onClickRow={handleClickRow}

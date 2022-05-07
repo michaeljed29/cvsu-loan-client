@@ -1,7 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
 import { useParams, useNavigationType, useLocation } from "react-router-dom";
-import { useLoan, useSetLoanStatus, useSetLoanMonthly } from "hooks/loans";
+import {
+  useLoan,
+  useSetLoanStatus,
+  useSetLoanMonthly,
+  useSetLoanProceeds,
+} from "hooks/loans";
 import { makeStyles } from "@mui/styles";
 import { get } from "lodash";
 import Grid from "@mui/material/Grid";
@@ -21,6 +26,10 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import MonthlyModal from "./MonthlyModal";
+import Paper from "@mui/material/Paper";
+import SaveIcon from "@mui/icons-material/Save";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,18 +40,62 @@ const useStyles = makeStyles((theme) => ({
     "& .amount": {
       fontWeight: 600,
     },
+
+    "& .MuiBox-root": {
+      margin: 0,
+      marginTop: 20,
+      display: "inline-block",
+    },
   },
   title: {
     fontSize: 30,
     fontWeight: 500,
+  },
+  loanProceeds: {
+    padding: 20,
+    maxWidth: 500,
+    width: 500,
+    marginTop: 50,
+    display: "inline-block",
+  },
+  item: {
+    display: "flex",
+
+    // "&:not(:last-child)": {
+    //   marginBottom: "15px",
+    // },
+  },
+  label: {
+    height: 48,
+    maxWidth: 230,
+    width: 230,
+    display: "flex",
+    alignItems: "center",
+  },
+  value: {
+    height: 48,
+    display: "flex",
+    alignItems: "center",
   },
 }));
 
 const LoanPage = () => {
   const [isRejecting, setIsRejecting] = useState(false);
   const classes = useStyles();
+  const [isEdit, setIsEdit] = useState(false);
   const { id } = useParams();
-  const loanQuery = useLoan(id);
+  const [loanProceedsValue, setLoanProceedsValue] = useState({
+    interest: 0,
+    serviceFee: 0,
+    retention: 0,
+    unpaidLoans: 0,
+    insurance: 0,
+    surcharge: 0,
+  });
+
+  const loanQuery = useLoan(id, {
+    onSuccess: (data) => setLoanProceedsValue(data.loanProceedsData),
+  });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const location = useLocation();
@@ -66,6 +119,11 @@ const LoanPage = () => {
   const refetchLoan = get(loanQuery, "refetch");
   const isLoading = get(loanQuery, "isLoading");
 
+  const setLoanProceedsResult = useSetLoanProceeds();
+
+  const setLoanProceeds = get(setLoanProceedsResult, "mutate");
+  const isLoadingLoanProceeds = get(setLoanProceedsResult, "isLoading");
+
   const { setAlert } = useContext(AlertContext);
 
   const handleBack = () => navigate(-1);
@@ -80,7 +138,14 @@ const LoanPage = () => {
     verificationCode,
     loanType,
     monthly,
+    loanProceedsAmount,
+    loanProceedsData,
   } = loan;
+
+  const { interest, serviceFee, retention, unpaidLoans, insurance, surcharge } =
+    get(loan, "loanProceedsData", {});
+
+  console.log("interest", interest);
 
   const isPending = status === "pending";
   const isProcessing = status === "processing";
@@ -179,6 +244,46 @@ const LoanPage = () => {
         },
       }
     );
+  };
+
+  const handleClickEdit = () => {
+    if (!isEdit) {
+      setIsEdit(true);
+      return;
+    }
+
+    const parsedValue = (number) => parseFloat(parseFloat(number).toFixed(2));
+
+    setLoanProceeds(
+      {
+        id: _id,
+        loanProceedsData: {
+          interest: parsedValue(loanProceedsValue.interest),
+          serviceFee: parsedValue(loanProceedsValue.serviceFee),
+          retention: parsedValue(loanProceedsValue.retention),
+          unpaidLoans: parsedValue(loanProceedsValue.unpaidLoans),
+          insurance: parsedValue(loanProceedsValue.insurance),
+          surcharge: parsedValue(loanProceedsValue.surcharge),
+        },
+      },
+      {
+        onSuccess: () => {
+          setAlert(`Loan has been successfully updated.`);
+
+          refetchLoan().then(() => {
+            setIsEdit(false);
+          });
+        },
+      }
+    );
+  };
+
+  const handleChangeTextField = (e) => {
+    e.preventDefault();
+    setLoanProceedsValue({
+      ...loanProceedsValue,
+      [e.target.name]: e.target.value,
+    });
   };
 
   if (isLoading) return <Loader />;
@@ -318,7 +423,170 @@ const LoanPage = () => {
           <Grid item xs={12} md={4} lg={3}>
             <ViewItem label="Amount:">{`₱ ${amount}`}</ViewItem>
           </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <ViewItem label="Loan Proceeds:">{`₱ ${loanProceedsAmount}`}</ViewItem>
+          </Grid>
         </Grid>
+
+        <div>
+          <Paper className={classes.loanProceeds} elevation={2}>
+            <div className={classes.item}>
+              <div className={classes.label}>Interest</div>
+              <div className={classes.value}>
+                {isEdit ? (
+                  <TextField
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">₱</InputAdornment>
+                      ),
+                    }}
+                    type="number"
+                    name="interest"
+                    value={loanProceedsValue.interest}
+                    onChange={handleChangeTextField}
+                    id="standard-basic"
+                    variant="standard"
+                  />
+                ) : (
+                  `₱ ${interest}`
+                )}
+              </div>
+            </div>
+            <div className={classes.item}>
+              <div className={classes.label}>Service Fee</div>
+              <div className={classes.value}>
+                {isEdit ? (
+                  <TextField
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">₱</InputAdornment>
+                      ),
+                    }}
+                    type="number"
+                    name="serviceFee"
+                    value={loanProceedsValue.serviceFee}
+                    onChange={handleChangeTextField}
+                    id="standard-basic"
+                    variant="standard"
+                  />
+                ) : (
+                  `₱ ${serviceFee}`
+                )}
+              </div>
+            </div>
+            <div className={classes.item}>
+              <div className={classes.label}>Retention</div>
+              <div className={classes.value}>
+                {isEdit ? (
+                  <TextField
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">₱</InputAdornment>
+                      ),
+                    }}
+                    type="number"
+                    name="retention"
+                    value={loanProceedsValue.retention}
+                    onChange={handleChangeTextField}
+                    id="standard-basic"
+                    variant="standard"
+                  />
+                ) : (
+                  `₱ ${retention}`
+                )}
+              </div>
+            </div>
+            <div className={classes.item}>
+              <div className={classes.label}>Unpaid Loans</div>
+              <div className={classes.value}>
+                {isEdit ? (
+                  <TextField
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">₱</InputAdornment>
+                      ),
+                    }}
+                    type="number"
+                    name="unpaidLoans"
+                    value={loanProceedsValue.unpaidLoans}
+                    onChange={handleChangeTextField}
+                    id="standard-basic"
+                    variant="standard"
+                  />
+                ) : (
+                  `₱ ${unpaidLoans}`
+                )}
+              </div>
+            </div>
+            <div className={classes.item}>
+              <div className={classes.label}>Insurance</div>
+              <div className={classes.value}>
+                {isEdit ? (
+                  <TextField
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">₱</InputAdornment>
+                      ),
+                    }}
+                    type="number"
+                    name="insurance"
+                    value={loanProceedsValue.insurance}
+                    onChange={handleChangeTextField}
+                    id="standard-basic"
+                    variant="standard"
+                  />
+                ) : (
+                  `₱ ${insurance}`
+                )}
+              </div>
+            </div>
+            <div className={classes.item}>
+              <div className={classes.label}>Surcharge</div>
+              <div className={classes.value}>
+                {isEdit ? (
+                  <TextField
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">₱</InputAdornment>
+                      ),
+                    }}
+                    type="number"
+                    name="surcharge"
+                    value={loanProceedsValue.surcharge}
+                    onChange={handleChangeTextField}
+                    id="standard-basic"
+                    variant="standard"
+                  />
+                ) : (
+                  `₱ ${surcharge}`
+                )}
+              </div>
+            </div>
+
+            {isAdmin() && (
+              <>
+                <ButtonLoader
+                  variant="contained"
+                  startIcon={isEdit ? <SaveIcon /> : <EditIcon />}
+                  onClick={handleClickEdit}
+                  loading={isLoadingLoanProceeds}
+                >
+                  {isEdit ? "Save" : "Edit"}
+                </ButtonLoader>
+
+                {isEdit && (
+                  <Button
+                    onClick={() => setIsEdit(false)}
+                    style={{ marginLeft: 10 }}
+                    variant="outlined"
+                  >
+                    Cancel
+                  </Button>
+                )}
+              </>
+            )}
+          </Paper>
+        </div>
 
         <Button
           onClick={handleBack}
