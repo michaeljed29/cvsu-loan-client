@@ -17,6 +17,7 @@ import { AlertContext } from "context/AlertContext";
 import Alert from "components/Alert";
 import Paper from "@mui/material/Paper";
 import { makeStyles } from "@mui/styles";
+import { isAdmin, userLoggedIn } from "util/index";
 
 const useStyles = makeStyles({
   total: {
@@ -36,7 +37,7 @@ const PaymentsPage = () => {
 
   const classes = useStyles();
 
-  const [user, setUser] = useState("All Users");
+  const [user, setUser] = useState(isAdmin() ? "All Users" : userLoggedIn._id);
   const [loan, setLoan] = useState("All Loans");
   const [payment, setPayment] = useState(0);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -98,10 +99,11 @@ const PaymentsPage = () => {
   const remainingBalance = totalAmountReleased - totalAmountPaid;
   const fullyPaid = remainingBalance <= 0;
 
-  const handleSubmit = (amount, { resetForm }) => {
+  const handleSubmit = (amount, officialReceipt, { resetForm }) => {
     createPayment(
       {
-        amount: parseInt(amount),
+        amount: parseFloat(parseFloat(amount).toFixed(2)),
+        officialReceipt,
         userId: user,
         loanId: loan,
         createdAt: new Date(),
@@ -131,36 +133,38 @@ const PaymentsPage = () => {
         monthly={payment}
       />
       <div style={{}}>
-        <FormControl
-          style={{
-            marginBottom: 20,
-            maxWidth: 400,
-            width: 400,
-            marginRight: 20,
-          }}
-          // fullWidth
-          variant="filled"
-          margin="none"
-        >
-          <InputLabel id="demo-simple-select-label">Users</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={user}
-            label="Type of Loan"
-            name="loanType"
-            onChange={(e) => {
-              setUser(e.target.value);
-              setLoan("All Loans");
+        {isAdmin() && (
+          <FormControl
+            style={{
+              marginBottom: 20,
+              maxWidth: 400,
+              width: 400,
+              marginRight: 20,
             }}
+            // fullWidth
+            variant="filled"
+            margin="none"
           >
-            {usersOption.map((user) => (
-              <MenuItem value={user.value}>{user.label}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+            <InputLabel id="demo-simple-select-label">Users</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={user}
+              label="Type of Loan"
+              name="loanType"
+              onChange={(e) => {
+                setUser(e.target.value);
+                setLoan("All Loans");
+              }}
+            >
+              {usersOption.map((user) => (
+                <MenuItem value={user.value}>{user.label}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
 
-        {!(user === "All Users") && (
+        {(!(user === "All Users") || !isAdmin()) && (
           <FormControl
             style={{ marginBottom: 20, maxWidth: 400, width: 400 }}
             // fullWidth
@@ -185,6 +189,7 @@ const PaymentsPage = () => {
       </div>
       <Table
         rows={payments}
+        isHideButton={!isAdmin()}
         title={"Payments Table"}
         isHideButton={user === "All Users" || loan === "All Loans" || fullyPaid}
         columns={[
@@ -205,12 +210,15 @@ const PaymentsPage = () => {
             field: "loanId.verificationCode",
             label: "Verification Code",
           },
-
           {
             field: "remainingBalance",
             label: "Remaining Balance",
             numeric: true,
             renderCell: (row) => `₱ ${row.remainingBalance}`,
+          },
+          {
+            field: "officialReceipt",
+            label: "OR (Official Receipt)",
           },
           {
             field: "amount",
@@ -233,6 +241,9 @@ const PaymentsPage = () => {
           "remainingBalance",
           "amount",
           "verificationCode",
+          "loanId.loanType",
+          "loanId.verificationCode",
+          "officialReceipt",
         ]}
         onAdd={() => setIsFormOpen(true)}
         onClickRow={() => {}}
@@ -242,9 +253,11 @@ const PaymentsPage = () => {
         !isFetching &&
         !isPreviousData && (
           <Paper elevation={2} className={classes.total}>
-            <div>{`Total Amount Released: ${totalAmountReleased}`}</div>
-            <div>{`Total Amount Paid: ${totalAmountPaid}`}</div>
-            <div>{`Remaining Balance: ${remainingBalance}`}</div>
+            <div>{`Total Amount Released: ${totalAmountReleased.toFixed(
+              2
+            )}`}</div>
+            <div>{`Total Amount Paid: ${totalAmountPaid.toFixed(2)}`}</div>
+            <div>{`Remaining Balance: ${remainingBalance.toFixed(2)}`}</div>
           </Paper>
         )}
     </>

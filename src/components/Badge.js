@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
       if (props.type === "info") return "#fff";
       return "#fff";
     },
+    textTransform: "capitalize",
   },
 }));
 

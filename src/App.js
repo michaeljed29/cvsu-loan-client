@@ -121,21 +121,19 @@ const App = (props) => {
           <ListItemText primary="Loans" />
         </ListItem>
 
-        {isAdmin() && (
-          <ListItem
-            selected={pathname.includes("/payments")}
-            button
-            key="Payments"
-            component={Link}
-            to="/payments"
-            onClick={handleDrawerToggle}
-          >
-            <ListItemIcon>
-              <PaymentsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Payments" />
-          </ListItem>
-        )}
+        <ListItem
+          selected={pathname.includes("/payments")}
+          button
+          key="Payments"
+          component={Link}
+          to="/payments"
+          onClick={handleDrawerToggle}
+        >
+          <ListItemIcon>
+            <PaymentsIcon />
+          </ListItemIcon>
+          <ListItemText primary="Payments" />
+        </ListItem>
 
         {isAdmin() && (
           <ListItem
@@ -339,7 +337,7 @@ const App = (props) => {
             <Route path="/loans/:id" element={<LoanPage />} />
             <Route path="/loans" element={<LoansPage />} />
 
-            {isAdmin() && <Route path="/payments" element={<PaymentsPage />} />}
+            <Route path="/payments" element={<PaymentsPage />} />
 
             {isAdmin() && (
               <>

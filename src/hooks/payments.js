@@ -10,6 +10,7 @@ export const usePayments = (pageInfo) => {
       {
         userId: pageInfo.userId,
         loanId: pageInfo.loanId,
+        officialReceipt: pageInfo.officialReceipt,
       },
     ],
     () => apiPayments.getPayments(pageInfo),

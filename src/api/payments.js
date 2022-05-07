@@ -1,9 +1,13 @@
 import api from "./util";
 
-export const getPayments = async ({ userId = "", loanId = "" }) => {
+export const getPayments = async ({
+  userId = "",
+  loanId = "",
+  officialReceipt = "",
+}) => {
   try {
     const { data } = await api.get(
-      `/payments?userId=${userId}&loanId=${loanId}`
+      `/payments?userId=${userId}&loanId=${loanId}&officialReceipt=${officialReceipt}`
     );
 
     return data;

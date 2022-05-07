@@ -17,13 +17,21 @@ const PaymentModal = (props) => {
     size = "md",
     loading,
     payment,
+    officialReceipt: officialReceiptProp,
   } = props;
 
   const [amount, setAmount] = React.useState(payment || 0);
+  const [officialReceipt, setOfficialReceipt] = React.useState(
+    officialReceiptProp || ""
+  );
 
-  const resetForm = () => setAmount(payment || 0);
+  const resetForm = () => {
+    setAmount(payment || 0);
+    setOfficialReceipt(officialReceiptProp || "");
+  };
 
   const handleChangeAmount = (e) => setAmount(e.target.value);
+  const handleChangeReceipt = (e) => setOfficialReceipt(e.target.value);
 
   return (
     <FormModal
@@ -32,7 +40,7 @@ const PaymentModal = (props) => {
       open={isOpen}
       onClose={onClose}
       title={title}
-      onSubmit={() => onSubmit(amount, { resetForm })}
+      onSubmit={() => onSubmit(amount, officialReceipt, { resetForm })}
       onClose={() => {
         resetForm();
         onClose();
@@ -48,12 +56,21 @@ const PaymentModal = (props) => {
             </InputAdornment>
           ),
         }}
+        style={{ marginBottom: 20 }}
         label="Amount"
         variant="filled"
         type="number"
         fullWidth
         onChange={handleChangeAmount}
         value={amount}
+      />
+      <TextField
+        label="OR (Official Receipt)"
+        variant="filled"
+        type="text"
+        fullWidth
+        onChange={handleChangeReceipt}
+        value={officialReceipt}
       />
     </FormModal>
   );
