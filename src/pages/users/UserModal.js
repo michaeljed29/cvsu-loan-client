@@ -24,6 +24,7 @@ const UserModal = (props) => {
     username: "",
     mobileNumber: "",
     department: "",
+    otherDepartment: "",
     position: "",
   });
 
@@ -38,6 +39,15 @@ const UserModal = (props) => {
   };
 
   const handleChange = (e) => {
+    if (e.target.name === "department" || e.target.value === "Others") {
+      setUser({
+        ...user,
+        [e.target.name]: e.target.value,
+        otherDepartment: "",
+      });
+      return;
+    }
+
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
@@ -155,8 +165,23 @@ const UserModal = (props) => {
           >
             Office Of The Graduate Studies / Open Learning College
           </MenuItem>
+          <MenuItem value={"Others"}>Others</MenuItem>
         </Select>
       </FormControl>
+
+      {user.department === "Others" && (
+        <TextField
+          margin="normal"
+          name="otherDepartment"
+          label="Enter Other Department"
+          type="text"
+          fullWidth
+          variant="filled"
+          value={user.otherDepartment}
+          onChange={handleChange}
+        />
+      )}
+
       <TextField
         margin="normal"
         name="position"

@@ -65,21 +65,30 @@ const UsersPage = () => {
   };
 
   const handleSubmit = (value, { resetForm }) => {
-    createUser(value, {
-      onSuccess: () => {
-        refetchUsers();
-        setIsFormOpen(false);
-        resetForm();
-        setAlert("User has been successfully added.");
+    createUser(
+      {
+        ...value,
+        department: value.otherDepartment || value.department,
       },
-    });
+      {
+        onSuccess: () => {
+          refetchUsers();
+          setIsFormOpen(false);
+          resetForm();
+          setAlert("User has been successfully added.");
+        },
+      }
+    );
   };
 
   const handleEdit = (value, { resetForm }) => {
     updateUser(
       {
         id: value._id,
-        value: value,
+        value: {
+          ...value,
+          department: value.otherDepartment || value.department,
+        },
       },
       {
         onSuccess: () => {
@@ -147,6 +156,7 @@ const UsersPage = () => {
             {
               field: "department",
               label: "Department",
+              renderCell: (row) => row.otherDepartment || row.department,
             },
           ]}
           searchKeys={["firstName", "lastName", "position", "department"]}

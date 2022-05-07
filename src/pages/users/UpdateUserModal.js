@@ -140,8 +140,23 @@ const UpdateUserModal = (props) => {
           >
             Office Of The Graduate Studies / Open Learning College
           </MenuItem>
+          <MenuItem value={"Others"}>Others</MenuItem>
         </Select>
       </FormControl>
+
+      {user.department === "Others" && (
+        <TextField
+          margin="normal"
+          name="otherDepartment"
+          label="Enter Other Department"
+          type="text"
+          fullWidth
+          variant="filled"
+          value={user.otherDepartment}
+          onChange={handleChange}
+        />
+      )}
+
       <TextField
         margin="normal"
         name="position"
