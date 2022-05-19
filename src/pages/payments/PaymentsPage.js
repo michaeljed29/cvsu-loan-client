@@ -189,16 +189,20 @@ const PaymentsPage = () => {
       </div>
       <Table
         rows={payments}
-        isHideButton={!isAdmin()}
         title={"Payments Table"}
-        isHideButton={user === "All Users" || loan === "All Loans" || fullyPaid}
+        isHideButton={
+          user === "All Users" ||
+          loan === "All Loans" ||
+          fullyPaid ||
+          !isAdmin()
+        }
         columns={[
           {
             field: "userId.firstName",
             label: "Name",
             renderCell: (row) => {
-              const user = get(row, "userId", {});
-              return `${user.firstName} ${user.lastName}`;
+              const user = get(row, "userId", {}) || {};
+              return `${user.firstName || ""} ${user.lastName || ""}`;
             },
           },
           {
