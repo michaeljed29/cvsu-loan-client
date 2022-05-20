@@ -83,7 +83,9 @@ const PaymentsPage = () => {
     userId: user === "All Users" ? "" : user,
     loanId: loan === "All Loans" ? "" : loan,
   });
-  const payments = get(paymentsQuery, "data", []);
+  const payments = get(paymentsQuery, "data", []).filter(
+    (payment) => payment.userId
+  );
   const refetchPayment = get(paymentsQuery, "refetch");
   const isLoading = get(paymentsQuery, "isLoading");
   const isFetching = get(paymentsQuery, "isFetching");
