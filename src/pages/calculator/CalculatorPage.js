@@ -16,9 +16,7 @@ import { getInterest, getServiceFee, getInsurance } from "./util";
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
-    // alignItems: "center",
     justifyContent: "center",
-    // flexDirection: "column",
   },
   paper: {
     // marginTop: 20,
