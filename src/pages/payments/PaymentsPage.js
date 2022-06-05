@@ -143,7 +143,6 @@ const PaymentsPage = () => {
               width: 400,
               marginRight: 20,
             }}
-            // fullWidth
             variant="filled"
             margin="none"
           >
@@ -169,7 +168,6 @@ const PaymentsPage = () => {
         {(!(user === "All Users") || !isAdmin()) && (
           <FormControl
             style={{ marginBottom: 20, maxWidth: 400, width: 400 }}
-            // fullWidth
             variant="filled"
             margin="none"
           >
