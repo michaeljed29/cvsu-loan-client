@@ -30,6 +30,7 @@ import Paper from "@mui/material/Paper";
 import SaveIcon from "@mui/icons-material/Save";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
+import ConfirmModal from "components/ConfirmModal";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -83,6 +84,7 @@ const LoanPage = () => {
   const [isRejecting, setIsRejecting] = useState(false);
   const classes = useStyles();
   const [isEdit, setIsEdit] = useState(false);
+  const [rejectMessage, setRejectMessage] = useState("");
   const { id } = useParams();
   const [loanProceedsValue, setLoanProceedsValue] = useState({
     interest: 0,
@@ -92,6 +94,7 @@ const LoanPage = () => {
     insurance: 0,
     surcharge: 0,
   });
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
 
   const loanQuery = useLoan(id, {
     onSuccess: (data) => setLoanProceedsValue(data.loanProceedsData),
@@ -139,6 +142,7 @@ const LoanPage = () => {
     loanType,
     monthly,
     loanProceedsAmount,
+    rejectMessage: rejectMessageProps,
     loanProceedsData,
   } = loan;
 
@@ -179,7 +183,11 @@ const LoanPage = () => {
         ? "approved"
         : "";
 
-    if (newValue === "rejected") setIsRejecting(true);
+    if (newValue === "rejected") {
+      setIsConfirmationOpen(true);
+      return;
+      // setIsRejecting(true);
+    }
 
     setLoanStatus(
       {
@@ -226,6 +234,29 @@ const LoanPage = () => {
       );
     }
   }, [notificatioState.prevPath]);
+
+  const handleReject = () => {
+    setIsRejecting(true);
+    setLoanStatus(
+      {
+        id: _id,
+        value: {
+          status: "rejected",
+          approverId: userLoggedIn._id,
+          rejectMessage,
+        },
+      },
+      {
+        onSuccess: () => {
+          refetchLoan();
+          setAlert(`Loan has been successfully set to rejected.`);
+          setIsRejecting(false);
+          setIsConfirmationOpen(false);
+          setRejectMessage("");
+        },
+      }
+    );
+  };
 
   const handleSubmit = (amount, { resetForm, setAmount }) => {
     setLoanMonthly(
@@ -290,6 +321,30 @@ const LoanPage = () => {
 
   return (
     <>
+      <ConfirmModal
+        open={isConfirmationOpen}
+        title="Reject Loan?"
+        text="Are you sure you want to delete user? This action can not be
+          revert"
+        loading={isUpdating && isRejecting}
+        onClose={() => {
+          setIsConfirmationOpen(false);
+        }}
+        onConfirm={handleReject}
+        noLabel="Cancel"
+        yesLabel="Confirm"
+      >
+        <TextField
+          style={{ width: 500 }}
+          id="standard-multiline-static"
+          label="Please Add a note"
+          multiline
+          rows={4}
+          variant="standard"
+          onChange={(e) => setRejectMessage(e.target.value)}
+          autoFocus
+        />
+      </ConfirmModal>
       <Alert />
       <MonthlyModal
         title={"Edit Monthly"}
@@ -354,6 +409,7 @@ const LoanPage = () => {
               onClick={handleSetStatus()}
               loading={isUpdating && isRejecting}
               color="error"
+              style={{ marginRight: 15 }}
             >
               Set to Rejected
             </ButtonLoader>
@@ -427,6 +483,16 @@ const LoanPage = () => {
             <ViewItem label="Loan Proceeds:">{`₱ ${loanProceedsAmount}`}</ViewItem>
           </Grid>
         </Grid>
+
+        {status === "rejected" && (
+          <Grid style={{ marginTop: 30 }} container spacing={3}>
+            <Grid item xs={12} md={4} lg={3}>
+              <ViewItem errorLabel label="Rejection Note:">
+                {rejectMessageProps}
+              </ViewItem>
+            </Grid>
+          </Grid>
+        )}
 
         <div>
           <Paper className={classes.loanProceeds} elevation={2}>

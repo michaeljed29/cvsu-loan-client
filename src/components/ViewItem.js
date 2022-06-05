@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme) => ({
   label: {
     fontSize: 12,
     fontWeight: 600,
-    color: "#757575",
+    color: (props) => (props.errorLabel ? "red" : "#757575"),
     marginBottom: 0,
   },
   value: {
@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ViewItem = (props) => {
-  const classes = useStyles();
+  const classes = useStyles(props);
   const { className, label, children } = props;
   return (
     <div className={`${className} ${classes.textValue}`}>

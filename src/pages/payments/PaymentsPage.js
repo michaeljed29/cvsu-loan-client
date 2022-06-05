@@ -220,7 +220,7 @@ const PaymentsPage = () => {
             field: "remainingBalance",
             label: "Remaining Balance",
             numeric: true,
-            renderCell: (row) => `₱ ${row.remainingBalance}`,
+            renderCell: (row) => `₱ ${row.remainingBalance.toFixed(2)}`,
           },
           {
             field: "officialReceipt",

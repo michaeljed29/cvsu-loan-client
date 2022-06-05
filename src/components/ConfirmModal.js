@@ -8,7 +8,18 @@ import ButtonLoader from "components/ButtonLoader";
 import Button from "@mui/material/Button";
 
 const ConfirmModal = (props) => {
-  const { open, title, text, icon, loading, onConfirm, onClose } = props;
+  const {
+    open,
+    title,
+    text,
+    icon,
+    loading,
+    onConfirm,
+    onClose,
+    children,
+    yesLabel,
+    noLabel,
+  } = props;
 
   return (
     <Dialog
@@ -19,13 +30,21 @@ const ConfirmModal = (props) => {
     >
       <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
       <DialogContent style={{ display: "flex", alignItems: "center" }}>
-        {icon}
-        <DialogContentText style={{ marginLeft: 15 }}>{text}</DialogContentText>
+        {children ? (
+          children
+        ) : (
+          <>
+            {icon}
+            <DialogContentText style={{ marginLeft: 15 }}>
+              {text}
+            </DialogContentText>
+          </>
+        )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>No</Button>
+        <Button onClick={onClose}>{noLabel || "No"}</Button>
         <ButtonLoader onClick={onConfirm} loading={loading}>
-          Yes
+          {yesLabel || "Yes"}
         </ButtonLoader>
       </DialogActions>
     </Dialog>
