@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 const useStyles = makeStyles((theme) => ({
   textValue: {},
   label: {
-    fontSize: 12,
+    fontSize: (props) => (props.errorLabel ? 17 : 12),
     fontWeight: 600,
     color: (props) => (props.errorLabel ? "red" : "#757575"),
     marginBottom: 0,
