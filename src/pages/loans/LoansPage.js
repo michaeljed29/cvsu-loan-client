@@ -119,7 +119,7 @@ const LoansPage = () => {
             field: "loanProceedsAmount",
             label: "Loan Proceeds",
             numeric: true,
-            renderCell: (row) => `₱ ${row.loanProceedsAmount}`,
+            renderCell: (row) => `₱ ${row.loanProceedsAmount.toFixed(2)}`,
           },
           {
             field: "monthly",

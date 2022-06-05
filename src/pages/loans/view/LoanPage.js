@@ -480,7 +480,9 @@ const LoanPage = () => {
             <ViewItem label="Amount:">{`₱ ${amount}`}</ViewItem>
           </Grid>
           <Grid item xs={12} md={4} lg={3}>
-            <ViewItem label="Loan Proceeds:">{`₱ ${loanProceedsAmount}`}</ViewItem>
+            <ViewItem label="Loan Proceeds:">{`₱ ${loanProceedsAmount.toFixed(
+              2
+            )}`}</ViewItem>
           </Grid>
         </Grid>
 
